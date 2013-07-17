@@ -52,7 +52,27 @@ class eZMultiPriceType extends eZDataType
         }
 
         // Check price.
-        if ( $http->hasPostVariable( $base . '_price_array_' . $contentObjectAttribute->attribute( "id" ) ) )
+        $setMainPriceCodeName = $base . "_price_set_main_currency_" . $contentObjectAttribute->attribute( "id" );
+        $setMainPriceCode = $http->hasPostVariable( $setMainPriceCodeName ) ? $http->postVariable( $setMainPriceCodeName ) : false;
+        $setMainPriceName = $base . "_price_set_main_currency_value_" . $contentObjectAttribute->attribute( "id" );
+        $setMainPrice = $http->hasPostVariable( $setMainPriceName ) ? $http->postVariable( $setMainPriceName ) : false;
+
+        if ( $http->hasPostVariable( $setMainPriceCodeName ) && $http->hasPostVariable( $setMainPriceName ) ) {
+            $currencyCode = $setMainPriceCode;
+            $value = $setMainPrice;
+            if( $contentObjectAttribute->validateIsRequired() || ( $value != '' ) )
+            {
+                if ( !preg_match( "#^[0-9]+(.){0,1}[0-9]{0,2}$#", $value ) )
+                {
+                    $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
+                                                                         "Invalid price for '%currencyCode' currency ",
+                                                                         false,
+                                                                         array( '%currencyCode' => $currencyCode ) ) );
+                    return eZInputValidator::STATE_INVALID;
+                }
+            }
+        }
+        else if ( $http->hasPostVariable( $base . '_price_array_' . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $customPriceList = $http->postVariable( $base . '_price_array_' . $contentObjectAttribute->attribute( "id" ) );
             foreach ( $customPriceList as $currencyCode => $value )
@@ -168,25 +188,63 @@ class eZMultiPriceType extends eZDataType
         $multiprice = $contentObjectAttribute->attribute( 'content' );
 
         $priceArrayName = $base . "_price_array_" . $contentObjectAttribute->attribute( "id" );
-        if ( $http->hasPostVariable( $priceArrayName ) )
+
+        // if we force main price code
+        $setMainPriceCodeName = $base . "_price_set_main_currency_" . $contentObjectAttribute->attribute( "id" );
+        $setMainPriceCode = $http->hasPostVariable( $setMainPriceCodeName ) ? $http->postVariable( $setMainPriceCodeName ) : false;
+        $setMainPriceName = $base . "_price_set_main_currency_value_" . $contentObjectAttribute->attribute( "id" );
+        $setMainPrice = $http->hasPostVariable( $setMainPriceName ) ? $http->postVariable( $setMainPriceName ) : false;
+        // remove all prices
+        if ( $setMainPriceCode != false ) {
+            foreach( $multiprice->priceList() as $currencyCode => $value )
+                $multiprice->setAutoPrice( $currencyCode, false );
+            if ( $setMainPrice != false && $setMainPrice != "" ) {
+                $multiprice->setCustomPrice( $setMainPriceCode, $setMainPrice );
+
+                $multiprice->updateAutoPriceList();
+        
+                $vatType = $http->postVariable( $base . '_ezmultiprice_vat_id_' . $contentObjectAttribute->attribute( 'id' ) );
+                $vatExInc = $http->postVariable( $base . '_ezmultiprice_inc_ex_vat_' . $contentObjectAttribute->attribute( 'id' ) );
+                $multiprice->setAttribute( 'selected_vat_type', $vatType );
+                $multiprice->setAttribute( 'is_vat_included', $vatExInc );
+        
+                $data_text = $vatType . ',' . $vatExInc;
+                $contentObjectAttribute->setAttribute( 'data_text', $data_text );
+            } else {
+                $multiprice->updateAutoPriceList();
+        
+                /*
+                $vatType = $http->postVariable( $base . '_ezmultiprice_vat_id_' . $contentObjectAttribute->attribute( 'id' ) );
+                $vatExInc = $http->postVariable( $base . '_ezmultiprice_inc_ex_vat_' . $contentObjectAttribute->attribute( 'id' ) );
+                $multiprice->setAttribute( 'selected_vat_type', $vatType );
+                $multiprice->setAttribute( 'is_vat_included', $vatExInc );
+                */
+                $data_text = null;
+                $contentObjectAttribute->setAttribute( 'data_text', $data_text );
+            }
+
+    
+            return true;
+        }
+        else if ( $http->hasPostVariable( $priceArrayName ) )
         {
             $customPriceList = $http->postVariable( $priceArrayName );
 
             foreach ( $customPriceList as $currencyCode => $value )
                 $multiprice->setCustomPrice( $currencyCode, $value );
+
+            $multiprice->updateAutoPriceList();
+    
+            $vatType = $http->postVariable( $base . '_ezmultiprice_vat_id_' . $contentObjectAttribute->attribute( 'id' ) );
+            $vatExInc = $http->postVariable( $base . '_ezmultiprice_inc_ex_vat_' . $contentObjectAttribute->attribute( 'id' ) );
+            $multiprice->setAttribute( 'selected_vat_type', $vatType );
+            $multiprice->setAttribute( 'is_vat_included', $vatExInc );
+    
+            $data_text = $vatType . ',' . $vatExInc;
+            $contentObjectAttribute->setAttribute( 'data_text', $data_text );
+    
+            return true;
         }
-
-        $multiprice->updateAutoPriceList();
-
-        $vatType = $http->postVariable( $base . '_ezmultiprice_vat_id_' . $contentObjectAttribute->attribute( 'id' ) );
-        $vatExInc = $http->postVariable( $base . '_ezmultiprice_inc_ex_vat_' . $contentObjectAttribute->attribute( 'id' ) );
-        $multiprice->setAttribute( 'selected_vat_type', $vatType );
-        $multiprice->setAttribute( 'is_vat_included', $vatExInc );
-
-        $data_text = $vatType . ',' . $vatExInc;
-        $contentObjectAttribute->setAttribute( 'data_text', $data_text );
-
-        return true;
     }
 
     /*!
@@ -298,7 +356,7 @@ class eZMultiPriceType extends eZDataType
 
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        return true;
+        return (bool)($contentObjectAttribute->attribute( 'data_text' ));
     }
 
     function toString( $contentObjectAttribute )
