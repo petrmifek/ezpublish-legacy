@@ -5,7 +5,7 @@
     <name>design/admin/content/browse</name>
     <message>
         <source>Bookmarks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Záložky</translation>
     </message>
 </context>
 <context>
@@ -16,7 +16,7 @@
     </message>
     <message>
         <source>File type</source>
-        <translation>Tip souboru</translation>
+        <translation>Typ souboru</translation>
     </message>
     <message>
         <source>Size</source>
@@ -24,7 +24,7 @@
     </message>
     <message>
         <source>Type</source>
-        <translation>Tip</translation>
+        <translation>Typ</translation>
     </message>
 </context>
 <context>
@@ -38,7 +38,7 @@
     <name>design/admin/content/upload</name>
     <message>
         <source>Upload</source>
-        <translation>Nahrát</translation>
+        <translation>Nahrát na server</translation>
     </message>
 </context>
 <context>
@@ -60,11 +60,11 @@
     </message>
     <message>
         <source>Send for publishing</source>
-        <translation>Poslat k vydání</translation>
+        <translation>Odeslat k publikaci</translation>
     </message>
     <message>
         <source>Discard</source>
-        <translation>Vyřadit</translation>
+        <translation>Zahodit</translation>
     </message>
 </context>
 <context>
@@ -78,14 +78,14 @@
     <name>design/standard/content/view</name>
     <message>
         <source>You have no bookmarks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nemáte žádné záložky</translation>
     </message>
 </context>
 <context>
     <name>design/standard/error/kernel</name>
     <message>
         <source>Your current user does not have the proper privileges to access this page.</source>
-        <translation>Váš současný uživatel nemá patřičná práva pro vstup na tuto stránku.</translation>
+        <translation>Aktuální uživatel nemá příslušná oprávnění pro přístup k této stránce.</translation>
     </message>
 </context>
 <context>
@@ -116,11 +116,11 @@
     </message>
     <message>
         <source>Browse</source>
-        <translation>Prohlížet</translation>
+        <translation>Procházet</translation>
     </message>
     <message>
         <source>Class</source>
-        <translation>Klasifikovat, třídit, třída, jakost</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>-- Not set --</source>
@@ -190,7 +190,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished">Náhled, prohlédnout si</translation>
+        <translation type="unfinished">Náhled</translation>
     </message>
     <message>
         <source>Direction left to right</source>
@@ -230,7 +230,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Select All</source>
-        <translation type="unfinished">Vybrat Vše</translation>
+        <translation type="unfinished">Vybrat vše</translation>
     </message>
     <message>
         <source>Use CTRL+V on your keyboard to paste the text into the window.</source>
@@ -563,7 +563,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Pomoc</translation>
+        <translation>Nápověda</translation>
     </message>
     <message>
         <source>Path</source>
@@ -583,7 +583,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Previous</source>
-        <translation type="unfinished">Předešlý</translation>
+        <translation type="unfinished">Předchozí</translation>
     </message>
     <message>
         <source>Select</source>
@@ -591,15 +591,15 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ/Psát</translation>
+        <translation type="unfinished">Typ</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>O</translation>
+        <translation>O programu</translation>
     </message>
     <message>
         <source>License</source>
-        <translation>Licence/Povolit/Oprávnit</translation>
+        <translation>Licence</translation>
     </message>
     <message>
         <source>Plugins</source>
@@ -671,7 +671,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Všechno</translation>
+        <translation>Vše</translation>
     </message>
     <message>
         <source>Align</source>
@@ -683,7 +683,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>View</source>
-        <translation>Pohled</translation>
+        <translation>Zobrazení</translation>
     </message>
     <message>
         <source>Inline</source>
@@ -691,7 +691,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation>Nadpis</translation>
+        <translation>Titulek</translation>
     </message>
     <message>
         <source>Offset</source>
@@ -703,7 +703,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation>ID/Identifikátor</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Href</source>
@@ -771,7 +771,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Table Properties</source>
-        <translation type="obsolete">Vlastnosti Tabulky</translation>
+        <translation type="obsolete">Vlastnosti tabulky</translation>
     </message>
     <message>
         <source>Cell Properties</source>
@@ -779,7 +779,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>Aplikovat na</translation>
+        <translation>Použít na</translation>
     </message>
     <message>
         <source>Upload new</source>
@@ -795,7 +795,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Automatic</source>
-        <translation>Automatický</translation>
+        <translation>Automaticky</translation>
     </message>
     <message>
         <source>Caption</source>
@@ -823,7 +823,7 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>There are no related objects.</source>
-        <translation>Nejsou zde žádné související objekty.</translation>
+        <translation>Nejsou žádné vztažené objekty.</translation>
     </message>
     <message>
         <source>Invalid or missing parameter: %parameter</source>
@@ -835,310 +835,310 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>this</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
-        <source>List of possible link types. Link types that use the &apos;://&apos; format are technically called protocols.</source>
-        <translation type="unfinished"></translation>
+        <source>List of possible link types. Link types that use the '://' format are technically called protocols.</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>eznode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>ezobject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Ftp</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Http</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Https</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Mail</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Anchor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Id not valid!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>The url the link points to, starts with link type (like http://).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Class are often used to give different design or appearance, either by using a different template, style or both.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Lets you specify the target window for the link, if any.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>The title on the (x)html tag, used by screen readers, and to give better explanation like this one.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>To set the width of the tag, either as percentage by appending % or as pixel size by just using a number.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>The unique identifier used for the element in the (x)html output, used by style sheets and/or anchors.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>New %tag_name tag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Edit %tag_name tag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Objekt</translation>
     </message>
     <message>
         <source>Node</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uzel</translation>
     </message>
     <message>
         <source>Relation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Switch embed file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Edit file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Edit image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Edit object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>[default]</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>New window (_blank)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Table cell</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Table header</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Upload new File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>There are no related files.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Upload new Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Alternative text</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tagy</translation>
     </message>
     <message>
         <source>There are no related images.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Upload new Object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Run spell checking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>ieSpell not detected. Do you want to install it now?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Horizontale rule</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Emotions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Insert emotion</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Cool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Cry</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Embarassed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Foot in mouth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Frown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Innocent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Kiss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Laughing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Money mouth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Sealed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Smile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Surprised</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Tongue out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Undecided</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Wink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Yell</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Paste is now in plain text mode. Click again to toggle back to regular paste mode. After you paste something you will be returned to regular paste mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Paste is now in plain text mode. Click again to toggle back to regular paste mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle spellchecker</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Spellchecker settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Ignore word</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Ignore all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Languages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jazyky</translation>
     </message>
     <message>
         <source>Please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Suggestions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>No suggestions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>No misspellings found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Definition term</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Insert/edit file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Insert horizontal ruler</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Use left and right arrows to navigate.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
     <name>design/standard/ezoe/handler</name>
     <message>
         <source>Object %1 does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Node %1 does not exist.</source>
@@ -1146,11 +1146,11 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Node &amp;apos;%1&amp;apos; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Some objects used in embed(-inline) tags have been deleted and are no longer available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
@@ -1172,12 +1172,12 @@ Chcete více informací o tomto problému?</translation>
         <translation type="obsolete">Učiňte vybraný text &lt;u&gt;underline&lt;/u&gt;. Toto tlačítko je možné použít, pokud máte klientský tag uvedený jako podtržený, vzorový kód k manipulaci podtržení klientského tag nezahrnuje Online Editor.</translation>
     </message>
     <message>
-        <source>Create a bullet list. To create a new list item, press &quot;Enter&quot;. To end a list, press &quot;Enter&quot; key on an empty list item. If you click this button when the cursor is on a list item, the formatting will be removed.</source>
-        <translation>Vytvořit a bullet seznam. K vytvoření nového seznamu položek stiskněte &quot;Enter&quot;. K ukončení sezmamu stiskněte klávesu &quot;Enter&quot; na prázdném seznamu položek. Pokud kliknete na toto tlačítko, když je kurzor na seznamu položek, formátování bude vyjmuto. </translation>
+        <source>Create a bullet list. To create a new list item, press "Enter". To end a list, press "Enter" key on an empty list item. If you click this button when the cursor is on a list item, the formatting will be removed.</source>
+        <translation>Vytvořit a bullet seznam. K vytvoření nového seznamu položek stiskněte "Enter". K ukončení sezmamu stiskněte klávesu "Enter" na prázdném seznamu položek. Pokud kliknete na toto tlačítko, když je kurzor na seznamu položek, formátování bude vyjmuto. </translation>
     </message>
     <message>
-        <source>Create a numbered list. To create a new list item, press &quot;Enter&quot;. To end a list, press &quot;Enter&quot; key on an empty list item. If you click this button when the cursor is on a list item, the formatting will be removed.</source>
-        <translation>Vytvořit číslovaný seznam. K vytvoření nového seznamu položek stiskněte &quot;Enter&quot;. K ukončení seznamu stiskněte klávesu &quot;Enter&quot; na prázdném seznamu položek. Pokud kliknete na toto tlačítko, když je kurzor na seznamu položek, formátování bude vyjmuto.</translation>
+        <source>Create a numbered list. To create a new list item, press "Enter". To end a list, press "Enter" key on an empty list item. If you click this button when the cursor is on a list item, the formatting will be removed.</source>
+        <translation>Vytvořit číslovaný seznam. K vytvoření nového seznamu položek stiskněte "Enter". K ukončení seznamu stiskněte klávesu "Enter" na prázdném seznamu položek. Pokud kliknete na toto tlačítko, když je kurzor na seznamu položek, formátování bude vyjmuto.</translation>
     </message>
     <message>
         <source>Increase list indent. Use this button to change the level of a list item in a nested list.</source>
@@ -1192,12 +1192,12 @@ Chcete více informací o tomto problému?</translation>
         <translation>Vrátit zpět poslední operaci v editoru. Abyste mohli vrátit zpět více než jednu operaci, pokračujte v klikání na tlačítko.</translation>
     </message>
     <message>
-        <source>Reverse the &quot;Undo&quot; command.</source>
-        <translation>Vrátit zpět příkaz &quot;Undo&quot;.</translation>
+        <source>Reverse the "Undo" command.</source>
+        <translation>Vrátit zpět příkaz "Undo".</translation>
     </message>
     <message>
-        <source>Create a hyperlink. You can select text first and then click this button to make the text a link. If the checkbox &quot;Open in new window&quot; is checked, the link will be displayed in a new browser window.</source>
-        <translation>Vytvořit hyperlink. Můžete nejdříve vybrat text a poté kliknout na toto tlačítko, abyste vytvořili z textu odkaz. Pokud je ovládací rámeček &quot;Otevřít v novém okně&quot; označený, link se zobrazí v novém okně prohlížeče.</translation>
+        <source>Create a hyperlink. You can select text first and then click this button to make the text a link. If the checkbox "Open in new window" is checked, the link will be displayed in a new browser window.</source>
+        <translation>Vytvořit hyperlink. Můžete nejdříve vybrat text a poté kliknout na toto tlačítko, abyste vytvořili z textu odkaz. Pokud je ovládací rámeček "Otevřít v novém okně" označený, link se zobrazí v novém okně prohlížeče.</translation>
     </message>
     <message>
         <source>Removes a hyperlink. Select a link first and then click this button to remove the link (but not the content of the link).</source>
@@ -1208,12 +1208,12 @@ Chcete více informací o tomto problému?</translation>
         <translation>Vytvořit pojmenovanou kotvu. Ikona anchor-like se objeví v editoru.</translation>
     </message>
     <message>
-        <source>Insert an image from the related images list, upload a new image, search for an existing images or browse for it. To upload a local image choose the local file, specify the name of the new object, choose placement from list, optionally write some caption text (You can use simple html formating here) and then click &quot;Upload&quot; button.</source>
-        <translation>Vložte obrázek ze souvisejícího seznamu obrázků, k nahrání nového obrázku vyhledejte již existující obrázky nebo browse for it. K nahrání místního obrázku vyberte místní soubor, specifikujte jméno nového předmětu, vyberte umístění ze seznamu, případně napište nějaký titulek (Zde můžete použít jednoduché formátování html) a poté klikněte na tlačítko &quot;Upload&quot;.</translation>
+        <source>Insert an image from the related images list, upload a new image, search for an existing images or browse for it. To upload a local image choose the local file, specify the name of the new object, choose placement from list, optionally write some caption text (You can use simple html formating here) and then click "Upload" button.</source>
+        <translation>Vložte obrázek ze souvisejícího seznamu obrázků, k nahrání nového obrázku vyhledejte již existující obrázky nebo browse for it. K nahrání místního obrázku vyberte místní soubor, specifikujte jméno nového předmětu, vyberte umístění ze seznamu, případně napište nějaký titulek (Zde můžete použít jednoduché formátování html) a poté klikněte na tlačítko "Upload".</translation>
     </message>
     <message>
-        <source>Insert an object from the related objects list, upload a new object, search for an existing object or browse for it. To upload a local file, click &quot;Upload new&quot; button choose the local file, specify the name of the new object, choose placement from list and then click &quot;Upload&quot; button. Note that embedded object will begin on a new line when displayed in the resulting XHTML.</source>
-        <translation>Vložte objekt ze souvisejícího seznamu objektů, nahrajte nový objekt, vyhledejte již existující objekt nebo browse for it. K nahrání místního souboru klikněte na tlačítko &quot;Nahrát nový&quot;, vyberte místní soubor, specifikujte název nového objektu, vyberte umístění ze seznamu a poté klikněte na tlačítko &quot;Nahrát&quot;. Všimněte si, že uložený objekt se spustí na novém řádku ve výsledném zobrazení XHTML.</translation>
+        <source>Insert an object from the related objects list, upload a new object, search for an existing object or browse for it. To upload a local file, click "Upload new" button choose the local file, specify the name of the new object, choose placement from list and then click "Upload" button. Note that embedded object will begin on a new line when displayed in the resulting XHTML.</source>
+        <translation>Vložte objekt ze souvisejícího seznamu objektů, nahrajte nový objekt, vyhledejte již existující objekt nebo browse for it. K nahrání místního souboru klikněte na tlačítko "Nahrát nový", vyberte místní soubor, specifikujte název nového objektu, vyberte umístění ze seznamu a poté klikněte na tlačítko "Nahrát". Všimněte si, že uložený objekt se spustí na novém řádku ve výsledném zobrazení XHTML.</translation>
     </message>
     <message>
         <source>Create a custom tag. Optionally select the text you want to transform to a custom tag and click the button to open the insert custom tag window. Select the name of the custom tag you want to insert from the list, edit the attributes and click OK to insert it.</source>
@@ -1268,8 +1268,8 @@ Chcete více informací o tomto problému?</translation>
         <translation>Otevřít Online Editor xhtml source code editor. Toto tlačítko není standardně aktivováno a je pouze určeno pro zkušené uživatele.</translation>
     </message>
     <message>
-        <source>Edit the current content attribute in the whole browser window(&quot;Fullscreen&quot;). Click second time to go back to normal editing.</source>
-        <translation>Editovat stávající parametr obsahu v celém okně prohlížeče(&quot;Fullscreen&quot;). Klikněte podruhé, abyste se vrátili k obyčejné editaci.</translation>
+        <source>Edit the current content attribute in the whole browser window("Fullscreen"). Click second time to go back to normal editing.</source>
+        <translation>Editovat stávající parametr obsahu v celém okně prohlížeče("Fullscreen"). Klikněte podruhé, abyste se vrátili k obyčejné editaci.</translation>
     </message>
     <message>
         <source>Open this help window.</source>
@@ -1321,70 +1321,70 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>Toggle &lt;u&gt;underline&lt;/u&gt; style on the selected text. This button is only enabled if you have a custom tag named underline.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle &lt;sub&gt;subscript&lt;/sub&gt; style on the selected text. This button is only enabled if you have a custom tag named subscript, template code to handle subscript custom tags is not included in Online Editor.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle &lt;sup&gt;superscript&lt;/sup&gt; style on the selected text. This button is only enabled if you have a custom tag named superscript, template code to handle superscript custom tags is not included in Online Editor.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle left align text, or float block content to the left.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle center align text, or float block content to the center (Same as not aligned by default).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle right align text, or float block content to the right.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Toggle justify text, stretches the lines so that each line has equal width.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
-        <source>Insert an file from the related file list, upload a new file, search for an existing file or browse for it. To upload a local file, click &quot;Upload new&quot; button choose the local file, specify the name of the new file, choose placement from list and then click &quot;Upload&quot; button. This button is not enabled by default.</source>
-        <translation type="unfinished"></translation>
+        <source>Insert an file from the related file list, upload a new file, search for an existing file or browse for it. To upload a local file, click "Upload new" button choose the local file, specify the name of the new file, choose placement from list and then click "Upload" button. This button is not enabled by default.</source>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Allows you to spellcheck your text using google api or other depending on ezoe.ini settings. This button is not enabled by default.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Find a string or a word in your text. This button is not enabled by default.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Replace a string or a word in your text. This button is not enabled by default.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Dialog to paste text from word, the dialog will handle cleaning the content from word.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Browse for a node / object in your bookmarks.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>You can switch text style from paragraph to header using keybord shortcut CTRL+1 to 6, and back to paragraph using CTRL+7</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
     <name>design/standard/ezoe/searchreplace</name>
     <message>
         <source>Find again</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>The search has been completed. The search string could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Find</source>
@@ -1396,137 +1396,137 @@ Chcete více informací o tomto problému?</translation>
     </message>
     <message>
         <source>All occurrences of the search string were replaced.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Find what</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Replace with</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Direction</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nahoru</translation>
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dolů</translation>
     </message>
     <message>
         <source>Match case</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Find next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nahradit</translation>
     </message>
     <message>
         <source>Replace all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
     <name>design/standard/ezoe/validator</name>
     <message>
         <source>&amp;quot;%label&amp;quot; is required and must have a value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be a valid number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be a valid integer number</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be a valid absolute url address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be a valid email address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be a valid css size/unit value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be a valid html element id</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be higher then %min</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>&amp;quot;%label&amp;quot; must be lower then %max</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
     <name>design/standard/ezoe/wai</name>
     <message>
         <source>Enter the word you want to search for here, for instance the name of the content you are looking for.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Lets you limit the content type your searching for, by limiting the eZ Publish content classes that are returned in the search result.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Name for the uploaded object, filename is used if none is specified.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Choose file to upload from your local machine.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Lets you specify where in eZ Publish to store the uploaded object.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Upload file from your local machine.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Search for content already in eZ Publish.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Browse the content tree in eZ Publish.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Select or browse content among your personal eZ Publish bookmarks.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Description to the file your uploading, so internet clients can read more about it before they decide to download it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Alternative text for the image, lets internet clients know what kind of image this is without dowloading it or actually seeing it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Caption for a image is usually shown bellow it as a description to the image.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
     <message>
         <source>Tags, aka Keywords are a comma separated list of words thats categorizes the content.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished" />
     </message>
 </context>
 <context>
@@ -1543,33 +1543,33 @@ Chcete více informací o tomto problému?</translation>
         <translation type="obsolete">Uzel %1 neexistuje.</translation>
     </message>
     <message>
-        <source>Node &apos;%1&apos; does not exist.</source>
-        <translation type="obsolete">Uzel &apos;%1&apos; neexistuje.</translation>
+        <source>Node '%1' does not exist.</source>
+        <translation type="obsolete">Uzel '%1' neexistuje.</translation>
     </message>
 </context>
 <context>
     <name>kernel/classes/datatypes</name>
     <message>
-        <source>Invalid e-mail address: &apos;%1&apos;</source>
-        <translation type="obsolete">Neplatná e-mailová adresa: &apos;%1&apos;</translation>
+        <source>Invalid e-mail address: '%1'</source>
+        <translation type="obsolete">Neplatná e-mailová adresa: '%1'</translation>
     </message>
     <message>
         <source>Content required</source>
-        <translation type="unfinished">Požadovaný obsah</translation>
+        <translation type="unfinished">Zadání obsahu vyžadováno</translation>
     </message>
 </context>
 <context>
     <name>kernel/classes/datatypes/ezxmltext</name>
     <message>
-        <source>Invalid e-mail address: &apos;%1&apos;</source>
-        <translation type="unfinished">Neplatná e-mailová adresa: &apos;%1&apos;</translation>
+        <source>Invalid e-mail address: '%1'</source>
+        <translation type="unfinished">Neplatná e-mailová adresa: '%1'</translation>
     </message>
 </context>
 <context>
     <name>kernel/content</name>
     <message>
         <source>Top Level Nodes</source>
-        <translation type="unfinished">Uzly nejvyšší úrovně</translation>
+        <translation type="unfinished">Uzly vrchní úrovně</translation>
     </message>
 </context>
 </TS>
