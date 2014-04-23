@@ -2,7 +2,7 @@
 /**
  * File containing the eZContentObjectTreeNode class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package kernel
@@ -659,7 +659,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
                             $datatypeWhereSQL = "
                                    $contentAttributeTableAlias.contentobject_id = ezcontentobject.id AND
                                    $contentAttributeTableAlias.contentclassattribute_id = $classAttributeID AND
-                                   $contentAttributeTableAlias.version = ezcontentobject_name.content_version AND";
+                                   $contentAttributeTableAlias.version = ezcontentobject.current_version AND";
                             $datatypeWhereSQL .= eZContentLanguage::sqlFilter( $contentAttributeTableAlias, 'ezcontentobject' );
 
                             $dataType = eZDataType::create( eZContentObjectTreeNode::dataTypeByClassAttributeID( $classAttributeID ) );
@@ -3833,8 +3833,6 @@ class eZContentObjectTreeNode extends eZPersistentObject
         $db = eZDB::instance();
         $db->begin();
 
-        $userClassIDArray = eZUser::contentClassIDs();
-
         foreach ( $deleteIDArray as $deleteID )
         {
             $node = eZContentObjectTreeNode::fetch( $deleteID );
@@ -3859,12 +3857,8 @@ class eZContentObjectTreeNode extends eZPersistentObject
 
             if ( $canRemove )
             {
-                $isUserClass = in_array( $class->attribute( 'id' ), $userClassIDArray );
+                $moveToTrashAllowed = $node->isNodeTrashAllowed();
 
-                if ( $moveToTrashAllowed and $isUserClass )
-                {
-                    $moveToTrashAllowed = false;
-                }
                 $readableChildCount = $node->subTreeCount( array( 'Limitation' => array() ) );
                 $childCount = $node->subTreeCount( array( 'IgnoreVisibility' => true ) );
                 $totalChildCount += $childCount;
@@ -3965,7 +3959,6 @@ class eZContentObjectTreeNode extends eZPersistentObject
 
                         foreach ( $children as $child )
                         {
-                            $childObject = $child->attribute( 'object' );
                             $child->removeNodeFromTree( $moveToTrashTemp );
                             eZContentObject::clearCache();
                         }
@@ -5082,37 +5075,52 @@ class eZContentObjectTreeNode extends eZPersistentObject
         }
         else
         {
-            $policies = $accessResult['policies'];
-            foreach ( $policies as $policyKey => $policy )
+            foreach ( $accessResult['policies'] as $policy )
             {
                 $policyArray = $this->classListFromPolicy( $policy, $languageCodeList );
                 if ( empty( $policyArray ) )
-                {
                     continue;
-                }
-                $classIDArrayPart = $policyArray['classes'];
-                $languageCodeArrayPart = $policyArray['language_codes'];
-                // No class limitation for this policy AND no previous limitation(s)
-                if ( $classIDArrayPart == '*' && empty( $classIDArray ) )
+
+                // Wildcard on all classes
+                if ( $policyArray['classes'] == '*' )
                 {
                     $fetchAll = true;
-                    $allowedLanguages['*'] = array_unique( array_merge( $allowedLanguages['*'], $languageCodeArrayPart ) );
+                    $allowedLanguages['*'] = array_unique( array_merge( $allowedLanguages['*'], $policyArray['language_codes'] ) );
+
+                    // we remove individual class ids that are overriden in all languages by the wildcard (#EZP-20933)
+                    foreach ( $allowedLanguages as $classId => $classLanguageCodes )
+                    {
+                        if ( $classId == '*' )
+                            continue;
+
+                        if ( !count( array_diff( $classLanguageCodes, $allowedLanguages['*'] ) ) )
+                        {
+                            unset( $allowedLanguages[$classId] );
+                        }
+                    }
                 }
-                else if ( is_array( $classIDArrayPart ) && $this->hasCurrentSubtreeLimitation( $policy ) )
+                else if ( is_array( $policyArray['classes'] ) && $this->hasCurrentSubtreeLimitation( $policy ) )
                 {
-                    $fetchAll = false;
-                    foreach( $classIDArrayPart as $class )
+                    foreach( $policyArray['classes'] as $class )
                     {
                         if ( isset( $allowedLanguages[$class] ) )
                         {
-                            $allowedLanguages[$class] = array_unique( array_merge( $allowedLanguages[$class], $languageCodeArrayPart ) );
+                            $allowedLanguages[$class] = array_unique( array_merge( $allowedLanguages[$class], $policyArray['language_codes'] ) );
                         }
                         else
                         {
-                            $allowedLanguages[$class] = $languageCodeArrayPart;
+                            // we don't add class identifiers that are already covered by the 'all classes' in a language
+                            if ( !empty( $allowedLanguages['*'] ) )
+                            {
+                                if ( !count( array_diff( $policyArray['language_codes'], $allowedLanguages['*'] ) ) )
+                                {
+                                    continue;
+                                }
+                            }
+                            $allowedLanguages[$class] = $policyArray['language_codes'];
                         }
                     }
-                    $classIDArray = array_merge( $classIDArray, array_diff( $classIDArrayPart, $classIDArray ) );
+                    $classIDArray = array_merge( $classIDArray, array_diff( $policyArray['classes'], $classIDArray ) );
                 }
             }
         }
@@ -6145,7 +6153,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
 
             $objectIDList = array();
             foreach ( $subtreeChunk as $curNode )
-                $objectIDList[] = $curNode['contentobject_id'];
+                $objectIDList[] = $curNode['id'];
             unset( $subtreeChunk );
 
             eZContentCacheManager::clearContentCacheIfNeeded( array_unique( $objectIDList ) );
@@ -6362,6 +6370,38 @@ class eZContentObjectTreeNode extends eZPersistentObject
             return json_encode( $classList );
 
         return $falseValue;
+    }
+
+
+    /**
+     * Figure out if a node can be sent to trash or if it should be directly deleted as objects
+     * containing ezuser attributes can not be sent to trash.
+     *
+     * @return bool true if it can go to trash, false if it should be deleted
+     */
+    public function isNodeTrashAllowed()
+    {
+        $userClassIDArray = eZUser::contentClassIDs();
+
+        $class = $this->attribute( 'object' )->attribute( 'content_class' );
+
+        // If current object has ezuser attributes, it can't be sent to trash
+        if ( in_array( $class->attribute( 'id' ), $userClassIDArray ) )
+        {
+            return false;
+        }
+
+        // Checking for children using classes with ezuser attribute. Using == because subTreecount returns strings
+        return $this->subTreeCount(
+                    array(
+                        'Limitation' => array(),
+                        'SortBy' => array( 'path' , false ),
+                        'IgnoreVisibility' => true,
+                        'ClassFilterType' => 'include',
+                        'ClassFilterArray' => $userClassIDArray,
+                        'AsObject' => false
+                    )
+                ) == 0 ;
     }
 
     /**

@@ -2,7 +2,7 @@
 /**
  * File containing the eZStringType class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package kernel
@@ -66,9 +66,15 @@ class eZStringType extends eZDataType
         }
     }
 
-    /*
-     Private method, only for using inside this class.
-    */
+    /**
+     * Validates $data with the constraints defined on the class attribute
+     *
+     * @param $data
+     * @param eZContentObjectAttribute $contentObjectAttribute
+     * @param eZContentClassAttribute $classAttribute
+     *
+     * @return int
+     */
     function validateStringHTTPInput( $data, $contentObjectAttribute, $classAttribute )
     {
         $maxLen = $classAttribute->attribute( self::MAX_LEN_FIELD );
@@ -382,5 +388,7 @@ class eZStringType extends eZDataType
     /// The max len validator
     public $MaxLenValidator;
 }
+
+eZDataType::register( eZStringType::DATA_TYPE_STRING, 'eZStringType' );
 
 ?>

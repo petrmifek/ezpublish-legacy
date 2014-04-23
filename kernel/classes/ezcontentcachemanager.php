@@ -2,7 +2,7 @@
 /**
  * File containing the eZContentCacheManager class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package kernel
@@ -33,6 +33,48 @@ class eZContentCacheManager
     const CLEAR_CHILDREN_CACHE = 32;
     const CLEAR_ALL_CACHE      = 63;
     const CLEAR_DEFAULT        = 15; // CLEAR_NODE_CACHE and CLEAR_PARENT_CACHE and CLEAR_RELATING_CACHE and CLEAR_KEYWORD_CACHE
+
+    /**
+     * Hash of additional NodeIDs to append the node list, for clearing view cache.
+     * Indexed by contentObjectID.
+     *
+     * @var array
+     */
+    private static $additionalNodeIDsPerObject = array();
+
+    /**
+     * Adds an additional NodeID to be appended to the node list for clearing view cache.
+     *
+     * @param int $contentObjectID
+     * @param int $additionalNodeID
+     */
+    public static function addAdditionalNodeIDPerObject( $contentObjectID, $additionalNodeID )
+    {
+        if ( !isset( self::$additionalNodeIDsPerObject[$contentObjectID] ) )
+        {
+            self::$additionalNodeIDsPerObject[$contentObjectID] = array();
+        }
+
+        self::$additionalNodeIDsPerObject[$contentObjectID][] = $additionalNodeID;
+    }
+
+    /**
+     * Appends additional node IDs.
+     *
+     * @param eZContentObject $contentObject
+     * @param array $nodeIDList
+     */
+    private static function appendAdditionalNodeIDs( eZContentObject $contentObject, &$nodeIDList )
+    {
+        $contentObjectId = $contentObject->attribute( 'id' );
+        if ( !isset( self::$additionalNodeIDsPerObject[$contentObjectId] ) )
+            return;
+
+        foreach ( self::$additionalNodeIDsPerObject[$contentObjectId] as $nodeID )
+        {
+            $nodeIDList[] = $nodeID;
+        }
+    }
 
     /*!
      \static
@@ -588,6 +630,8 @@ class eZContentCacheManager
             }
         }
 
+        self::appendAdditionalNodeIDs( $contentObject, $nodeList );
+
         //self::writeDebugBits( $handledObjectList, self::CLEAR_SIBLINGS_CACHE );
     }
 
@@ -743,18 +787,18 @@ class eZContentCacheManager
 
         eZDebug::accumulatorStart( 'node_cleanup', '', 'Node cleanup' );
 
-        $nodeList = ezpEvent::getInstance()->filter( 'content/cache', $nodeList );
-
         eZContentObject::expireComplexViewModeCache();
         $cleanupValue = eZContentCache::calculateCleanupValue( count( $nodeList ) );
 
         if ( eZContentCache::inCleanupThresholdRange( $cleanupValue ) )
         {
+            $nodeList = ezpEvent::getInstance()->filter( 'content/cache', $nodeList );
             eZContentCache::cleanup( $nodeList );
         }
         else
         {
             eZDebug::writeDebug( "Expiring all view cache since list of nodes({$cleanupValue}) exceeds site.ini\[ContentSettings]\CacheThreshold", __METHOD__ );
+            ezpEvent::getInstance()->notify( 'content/cache/all' );
             eZContentObject::expireAllViewCache();
         }
 
@@ -962,7 +1006,7 @@ class eZContentCacheManager
             $ini = eZINI::instance();
             $useURLAlias =& $GLOBALS['eZContentObjectTreeNodeUseURLAlias'];
             $pathPrefix = $ini->variable( 'SiteAccessSettings', 'PathPrefix' );
-            
+
             // get staticCacheHandler instance
             $optionArray = array( 'iniFile'      => 'site.ini',
                                   'iniSection'   => 'ContentSettings',
@@ -1109,6 +1153,8 @@ class eZContentCacheManager
         {
             // view cache and/or ordinary template block cache
             eZContentObject::expireAllCache();
+
+            ezpEvent::getInstance()->notify( 'content/cache/all' );
 
             // subtree template block caches
             if ( $templateCacheEnabled )

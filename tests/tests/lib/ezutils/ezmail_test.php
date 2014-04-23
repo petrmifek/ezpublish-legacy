@@ -2,7 +2,7 @@
 /**
  * File containing the eZMailTest class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package tests
@@ -800,7 +800,7 @@ class eZMailTest extends ezpTestCase
             }
 
             // Open mailbox and delete all existing emails in the account
-            $mbox = imap_open( $mboxString, $recipient['username'], $recipient['password'] );
+            $mbox = @imap_open( $mboxString, $recipient['username'], $recipient['password'] );
             if ( !$mbox )
             {
                 $this->markTestSkipped( 'Cannot open mailbox for ' . $recipient['username'] . ': ' . imap_last_error() );
@@ -860,7 +860,7 @@ class eZMailTest extends ezpTestCase
         // Read emails
         foreach ( $recipients as $recipient )
         {
-            $mbox = imap_open( $mboxString, $recipient['username'], $recipient['password'] );
+            $mbox = @imap_open( $mboxString, $recipient['username'], $recipient['password'] );
             if ( !$mbox )
             {
                 $this->markTestSkipped( 'Cannot open mailbox for ' . $recipient['username'] . ': ' . imap_last_error() );

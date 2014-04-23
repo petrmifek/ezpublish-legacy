@@ -2,7 +2,7 @@
 /**
  * File containing Symfony session handler
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package lib
@@ -18,7 +18,10 @@
  */
 class ezpSessionHandlerSymfony extends ezpSessionHandler
 {
-    protected $storage = null;
+    /**
+     * @var \Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface
+     */
+    protected $storage;
 
     /**
      * reimp. Does not do anything to let Symfony manage the session handling
@@ -113,7 +116,7 @@ class ezpSessionHandlerSymfony extends ezpSessionHandler
     /**
      * Set the storage handler defined in Symfony.
      *
-     * @param Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface $storage
+     * @param \Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface $storage
      */
     public function setStorage( $storage )
     {
@@ -127,6 +130,11 @@ class ezpSessionHandlerSymfony extends ezpSessionHandler
      */
     public function sessionStart()
     {
+        if ( $this->storage && !$this->storage->isStarted() )
+        {
+            $this->storage->start();
+        }
+
         return true;
     }
 }

@@ -7,7 +7,7 @@
 // ## BEGIN COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 // SOFTWARE NAME: eZ JSCore extension for eZ Publish
 // SOFTWARE RELEASE: 1.x
-// COPYRIGHT NOTICE: Copyright (C) 1999-2013 eZ Systems AS
+// COPYRIGHT NOTICE: Copyright (C) 1999-2014 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2.0
 // NOTICE: >
 //   This program is free software; you can redistribute it and/or
@@ -242,7 +242,7 @@ class ezjscAjaxContent
         $ret['owner_id']                	= (int) $contentObject->attribute( 'owner_id' );
         $ret['class_id']                	= (int) $contentObject->attribute( 'contentclass_id' );
         $ret['class_name']              	= $contentObject->attribute( 'class_name' );
-        $ret['path_identification_string'] 	= $node->attribute( 'path_identification_string' );
+        $ret['path_identification_string'] 	= $node ? $node->attribute( 'path_identification_string' ) : '';
         $ret['translations']            	= eZContentLanguage::decodeLanguageMask($contentObject->attribute( 'language_mask' ), true);
         $ret['can_edit']                	= $contentObject->attribute( 'can_edit' );
 
@@ -459,10 +459,18 @@ class ezjscAjaxContent
                         $imageArray,
                         function ( &$element, $key )
                         {
+                            // These fields can contain non utf-8 content
+                            // badly handled by mb_check_encoding
+                            // so they are just encoded in base64
+                            // see https://jira.ez.no/browse/EZP-21358
+                            if ( $key == "MakerNote" || $key == "UserComment")
+                            {
+                                $element =  base64_encode( (string)$element );
+                            }
                             // json_encode/xmlEncode need UTF8 encoded strings
                             // (exif) metadata might not be for instance
                             // see https://jira.ez.no/browse/EZP-19929
-                            if ( !mb_check_encoding( $element, 'UTF-8' ) )
+                            else if ( !mb_check_encoding( $element, 'UTF-8' ) )
                             {
                                 $element = mb_convert_encoding(
                                     (string)$element, 'UTF-8'

@@ -2,7 +2,7 @@
 /**
  * File containing Mvc configuration
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package kernel
@@ -41,12 +41,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
         if ( strpos( $_SERVER['SCRIPT_NAME'], self::INDEX_FILE ) !== false ) // Non-vhost mode
         {
             // In non-vhost mode we need to build the prefix to be removed from URI
-            // This prefix is contained in SCRIPT_NAME server variable
-            $parser->prefix = $_SERVER['SCRIPT_NAME'];
-            if ( strpos( $_SERVER['REQUEST_URI'], self::INDEX_FILE ) === false ) // Index file doesn't appear in requested URI, remove it from the prefix
-            {
-                $parser->prefix = str_replace( '/'.self::INDEX_FILE, '', $parser->prefix );
-            }
+            $parser->prefix = eZSys::indexDir(true);
         }
 
         return $parser;

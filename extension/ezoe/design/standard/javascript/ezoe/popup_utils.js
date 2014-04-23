@@ -2,7 +2,7 @@
     eZ Online Editor MCE popup : common js code used in popups
     Created on: <06-Feb-2008 00:00:00 ar>
     
-    Copyright (c) 1999-2013 eZ Systems AS
+    Copyright (c) 1999-2014 eZ Systems AS
     Licensed under the GPL 2.0 License:
     http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt 
 */
@@ -230,7 +230,7 @@ var eZOEPopupUtils = {
             }
             else if ( eZOEPopupUtils.xmlToXhtmlHash[s.tagName] )
             {
-                s.editorElement = eZOEPopupUtils.insertTagCleanly( ed, eZOEPopupUtils.xmlToXhtmlHash[s.tagName], '&nbsp;' );
+                s.editorElement = eZOEPopupUtils.insertTagCleanly( ed, eZOEPopupUtils.xmlToXhtmlHash[s.tagName], tinymce.isIE ? '&nbsp;' : '<br data-mce-bogus="1" />' );
             }
             if ( s.onTagGenerated )
             {
@@ -447,11 +447,11 @@ var eZOEPopupUtils = {
             'style': ''
         }, s = eZOEPopupUtils.settings, handler = s.customAttributeSaveHandler;
         var customArr = [];
-        jQuery( '#' + node + ' input,#' + node + ' select' ).each(function( i, el )
+        jQuery( '#' + node + ' input,#' + node + ' select,#' + node + ' textarea' ).each(function( i, el )
         {
             var o = jQuery( el ), name = o.attr("name"), value, style;
             if ( o.hasClass('mceItemSkip') || !name ) return;
-            if ( o.attr("type") === 'checkbox' && !o.attr("checked") ) return;
+            if ( o.attr("type") === 'checkbox' && !o.prop("checked") ) return;
 
             // see if there is a save hander that needs to do some work on the value
             if ( handler[el.id] !== undefined && handler[el.id].call !== undefined )
@@ -486,7 +486,7 @@ var eZOEPopupUtils = {
         {
             var o = jQuery( el ), name = o.attr("name");
             if ( o.hasClass('mceItemSkip') || !name ) return;
-            if ( o.attr("type") === 'checkbox' && !o.attr("checked") ) return;
+            if ( o.attr("type") === 'checkbox' && !o.prop("checked") ) return;
             // see if there is a save hander that needs to do some work on the value
             if ( handler[el.id] !== undefined && handler[el.id].call !== undefined )
                 args[name] = handler[el.id].call( o, el, o.val() );
@@ -558,7 +558,7 @@ var eZOEPopupUtils = {
             var key = t.shift();
             values[key] = t.join('|');
         }
-        jQuery( '#' + node + ' input,#' + node + ' select' ).each(function( i, el )
+        jQuery( '#' + node + ' input,#' + node + ' select,#' + node + ' textarea' ).each(function( i, el )
         {
             var o = jQuery( el ), name = el.name;
             if ( o.hasClass('mceItemSkip') || !name )

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package kernel
@@ -93,6 +93,11 @@ if ( $Module->isCurrentAction( 'Publish' ) and
                                         'url' => false ) );
         return $Result;
     }
+
+    $behaviour = new ezpContentPublishingBehaviour();
+    $behaviour->isTemporary = true;
+    $behaviour->disableAsynchronousPublishing = false;
+    ezpContentPublishingBehaviour::setBehaviour( $behaviour );
 
     $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $ObjectID,
                                                                                  'version' => $EditVersion ) );

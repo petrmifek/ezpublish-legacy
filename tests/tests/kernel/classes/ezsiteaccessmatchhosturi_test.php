@@ -2,7 +2,7 @@
 /**
  * File containing the eZSiteAccessMatchHostUriTest class
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
+ * @copyright Copyright (C) 1999-2014 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
  * @version //autogentag//
  * @package tests
@@ -84,6 +84,40 @@ class eZSiteAccessMatchHostUriTest extends ezpTestCase
             array( "/abcde/foo/", "abcde_foo", eZSiteAccess::TYPE_HTTP_HOST_URI, array( "abcde", "foo" ) ),
             array( "abcdef/foo/bar", "abcdef_foo", eZSiteAccess::TYPE_HTTP_HOST_URI, array( "abcdef", "foo" ) ),
             array( "abcdefg/foo/abc", "abcdefg_foo", eZSiteAccess::TYPE_HTTP_HOST_URI, array( "abcdefg", "foo" ) ),
+        );
+    }
+
+    /**
+     * Test for eZSiteAccess::change(), washing non-latin1 chars from the site access.
+     * @dataProvider providerForTestChange
+     */
+    public function testChange( $name, $type, $dirtyUriPart, $washedUriPart )
+    {
+        $this->assertEquals(
+            array(
+                'name' => $name,
+                'type' => $type,
+                'uri_part' => array( $washedUriPart )
+            ),
+            eZSiteAccess::change(
+                array(
+                    'name' => $name,
+                    'type' => $type,
+                    'uri_part' => array( $dirtyUriPart )
+                )
+            )
+        );
+    }
+
+    public function providerForTestChange()
+    {
+        return array(
+            array( 'eng', eZSiteAccess::TYPE_HTTP_HOST_URI, 'eng', 'eng' ),
+            array( 'eng', eZSiteAccess::TYPE_HTTP_HOST_URI, 'engæ', 'eng' ),
+            array( 'eng', eZSiteAccess::TYPE_HTTP_HOST_URI, 'engæøå', 'eng' ),
+            array( 'eng', eZSiteAccess::TYPE_HTTP_HOST_URI, 'engæøåÆØÅ', 'eng' ),
+            array( 'eng', eZSiteAccess::TYPE_HTTP_HOST_URI, '€eng$', 'eng' ),
+            array( 'eng', eZSiteAccess::TYPE_HTTP_HOST_URI, '€åeng$ø', 'eng' ),
         );
     }
 }
