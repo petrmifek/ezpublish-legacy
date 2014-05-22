@@ -2,8 +2,8 @@
 /**
  * Autoloader definition for eZ Publish Kernel files.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  *
@@ -599,6 +599,7 @@ return array(
       'ezpI18n'                                            => 'kernel/common/ezpi18n.php',
       'ezpKernel'                                          => 'kernel/private/classes/ezpkernel.php',
       'ezpKernelHandler'                                   => 'kernel/private/interfaces/ezpkernelhandler.php',
+      'ezpKernelRedirect'                                  => 'kernel/private/classes/ezpkernelredirect.php',
       'ezpKernelResult'                                    => 'kernel/private/classes/ezpkernelresult.php',
       'ezpKernelTreeMenu'                                  => 'kernel/private/classes/ezpkerneltreemenu.php',
       'ezpKernelWeb'                                       => 'kernel/private/classes/ezpkernelweb.php',

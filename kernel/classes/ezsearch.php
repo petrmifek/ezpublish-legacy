@@ -2,8 +2,8 @@
 /**
  * File containing the eZSearch class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  */
@@ -62,7 +62,7 @@ class eZSearch
      * @param bool $commit Whether to commit after removing the object
      * @return bool True if the operation succeed.
      */
-    static function removeObject( $contentObject, $commit = true )
+    static function removeObject( $contentObject, $commit = null )
     {
         $searchEngine = eZSearch::getEngine();
 
@@ -82,7 +82,7 @@ class eZSearch
      * @param bool $commit Whether to commit after removing the object
      * @return bool True if the operation succeed.
      */
-    static function removeObjectById( $contentObjectId, $commit = true )
+    static function removeObjectById( $contentObjectId, $commit = null )
     {
         $searchEngine = eZSearch::getEngine();
         if ( $searchEngine instanceof ezpSearchEngine )

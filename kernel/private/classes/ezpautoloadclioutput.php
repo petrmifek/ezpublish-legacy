@@ -2,8 +2,8 @@
 /**
  * File containing the ezpAutoloadCliOutput class
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  */
@@ -42,10 +42,18 @@ class ezpAutoloadCliOutput implements ezpAutoloadOutput
      */
     protected $data = null;
 
-    public function __construct()
+    /**
+     * Constructor of the ezpAutoloadCliOutput class
+     *
+     * @param bool|null $quiet True to not display any messages/warnings to the output.
+     *                         False / null to display all messages.
+     * @return void
+     */
+    public function __construct( $quiet = false )
     {
         $this->output = new ezcConsoleOutput();
         $this->output->formats->warning->color = 'red';
+        $this->output->options->verbosityLevel = $quiet ? 0 : 1;
 
         $this->data = array();
         $this->data['phase1'] = array();

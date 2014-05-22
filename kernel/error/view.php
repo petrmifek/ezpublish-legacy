@@ -1,7 +1,7 @@
 <?php
 /**
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  */
@@ -75,8 +75,13 @@ $GLOBALS["eZRequestError"] = true;
                     }
                     else
                     {
-                        header( eZSys::serverVariable( 'SERVER_PROTOCOL' ) . " $httpErrorString" );
-                        header( "Status: $httpErrorString" );
+                        // we need to store the header so that they are listed in view cache data ()
+                        $responseHeaders = array(
+                            eZSys::serverVariable( 'SERVER_PROTOCOL' ) . " $httpErrorString",
+                            "Status: $httpErrorString"
+                        );
+                        header( $responseHeaders[0] );
+                        header( $responseHeaders[1] );
                     }
                 }
             }
@@ -183,4 +188,5 @@ $Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/error', 'Error' )
 $Result['errorCode'] = $httpErrorCode;
 $Result['errorMessage'] = $httpErrorName;
 
-?>
+if ( isset( $responseHeaders ) )
+    $Result['responseHeaders'] = $responseHeaders;

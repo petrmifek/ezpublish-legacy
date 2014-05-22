@@ -2,8 +2,8 @@
 /**
  * File containing the eZImageFileRegression class
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package tests
  */
@@ -67,7 +67,7 @@ class eZImageFileRegression extends ezpDatabaseTestCase
      *
      * @param object $object
      * @param string $newLanguageCode
-     * @return version in new language
+     * @return eZContentObjectVersion in new language
      */
     public function addTranslationDontPublish( $object, $newLanguageCode )
     {

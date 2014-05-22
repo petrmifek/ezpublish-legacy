@@ -2,8 +2,8 @@
 /**
  * File containing the eZURIRegression class
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package tests
  */
@@ -16,12 +16,6 @@ class eZURIRegression extends ezpTestCase
     private $oldSysInstance;
 
     private $queryString;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->setName( "eZURI Regression Tests" );
-    }
 
     public function setUp()
     {
@@ -68,6 +62,64 @@ class eZURIRegression extends ezpTestCase
     public function testQueryString()
     {
         self::assertEquals( $this->queryString, eZURI::instance()->attribute( "query_string" ) );
+    }
+
+    /**
+     * Test for issue EZP-21325
+     * @dataProvider providerKeepSlashesUserParameters
+     * @link https://jira.ez.no/browse/EZP-21325
+     */
+    public function testKeepSlashesUserParameters( $url, $userParameters )
+    {
+        $uri = new eZURI( $url );
+        $this->assertEmpty(
+            array_diff(
+                $uri->userParameters(),
+                $userParameters
+            )
+        );
+    }
+
+    public function providerKeepSlashesUserParameters()
+    {
+        return array(
+            array(
+                '/(url)/ez.no/(other)/share.ez.no',
+                array(
+                    'url' => 'ez.no',
+                    'other' => 'share.ez.no',
+                )
+            ),
+            array(
+                '/(url)/http://ez.no/(other)/http://share.ez.no',
+                array(
+                    'url' => 'http://ez.no',
+                    'other' => 'http://share.ez.no',
+                )
+            ),
+            array(
+                '/(redirect)/http://ez.no',
+                array( 'redirect' => 'http://ez.no' )
+            ),
+            array(
+                '/(param)/segment1////test2',
+                array( 'param' => 'segment1////test2' )
+            ),
+            array(
+                '/(p)/segment1/test2/(r)/http://ez.no',
+                array(
+                    'p' => 'segment1/test2',
+                    'r' => 'http://ez.no'
+                )
+            ),
+            array(
+                '/(p)/segment1////test2/(r)/http://ez.no',
+                array(
+                    'p' => 'segment1////test2',
+                    'r' => 'http://ez.no'
+                )
+            )
+        );
     }
 }
 

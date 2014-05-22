@@ -2,8 +2,8 @@
 /**
  * File containing the eZURLObjectLink class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  */
@@ -167,15 +167,9 @@ class eZURLObjectLink extends eZPersistentObject
     static function fetchLinkList( $contentObjectAttributeID, $contentObjectAttributeVersion, $asObject = true )
     {
         $linkList = array();
-        $conditions = array( 'contentobject_attribute_id' => $contentObjectAttributeID );
-        if ( $contentObjectAttributeVersion !== false )
-            $conditions['contentobject_attribute_version'] = $contentObjectAttributeVersion;
-        $urlObjectLinkList = eZPersistentObject::fetchObjectList( eZURLObjectLink::definition(),
-                                                                   null,
-                                                                   $conditions,
-                                                                   null,
-                                                                   null,
-                                                                   $asObject );
+
+        $urlObjectLinkList = self::fetchLinkObjectList( $contentObjectAttributeID, $contentObjectAttributeVersion, $asObject );
+
         foreach ( $urlObjectLinkList as $urlObjectLink )
         {
             if ( $asObject )
@@ -190,6 +184,34 @@ class eZURLObjectLink extends eZPersistentObject
             }
         }
         return $linkList;
+    }
+
+    /**
+     * Fetches an array of eZURLObjectLink
+     *
+     * @param $contentObjectAttributeID
+     * @param $contentObjectAttributeVersion : if all links object for all versions are returned
+     * @param bool $asObject
+     *
+     * @return array|eZURLObjectLink[]|null
+     */
+    static public function fetchLinkObjectList( $contentObjectAttributeID, $contentObjectAttributeVersion, $asObject = true )
+    {
+        $conditions = array( 'contentobject_attribute_id' => $contentObjectAttributeID );
+
+        if ( $contentObjectAttributeVersion !== false )
+        {
+            $conditions['contentobject_attribute_version'] = $contentObjectAttributeVersion;
+        }
+
+        return eZPersistentObject::fetchObjectList(
+            eZURLObjectLink::definition(),
+            null,
+            $conditions,
+            null,
+            null,
+            $asObject
+        );
     }
 
     /*!

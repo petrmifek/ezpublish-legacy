@@ -2,8 +2,8 @@
 /**
  * File containing the ezpKernelWeb class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
 
@@ -122,6 +122,20 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             // their overrides
             eZINI::injectSettings( $injectedSettings );
         }
+
+        if ( isset( $settings['injected-merge-settings'] ) )
+        {
+            $injectedSettings = array();
+            foreach ( $settings["injected-merge-settings"] as $keySetting => $injectedSetting )
+            {
+                list( $file, $section, $setting ) = explode( "/", $keySetting );
+                $injectedSettings[$file][$section][$setting] = $injectedSetting;
+            }
+            // those settings override anything else in local .ini files and
+            // their overrides
+            eZINI::injectMergeSettings( $injectedSettings );
+        }
+
         $this->settings = $settings + array(
             'siteaccess'            => null,
             'use-exceptions'        => false,
@@ -353,7 +367,8 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
         if ( $this->module->exitStatus() == eZModule::STATUS_REDIRECT )
         {
-            $this->redirect();
+            $this->shutdown();
+            return $this->redirect();
         }
 
         $uiContextName = $this->module->uiContextName();
@@ -383,7 +398,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
             // Update last accessed view page
             if ( $currentURI != $lastAccessedViewURI &&
-                 !in_array( $uiContextName, array( 'edit', 'administration', 'browse', 'authentication' ) ) )
+                 !in_array( $uiContextName, array( 'edit', 'administration', 'ajax', 'browse', 'authentication' ) ) )
             {
                 $http->setSessionVariable( "LastAccessesURI", $currentURI );
             }
@@ -941,6 +956,9 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             }
         }
 
+        // After the module redirect url is completed, add the queryString params so they carry over the redirect operation
+        $redirectURI .= eZSys::queryString();
+
         if ( $ini->variable( 'ContentSettings', 'StaticCache' ) == 'enabled' )
         {
             $staticCacheHandlerClassName = $ini->variable( 'ContentSettings', 'StaticCacheHandler' );
@@ -949,11 +967,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
         eZDB::checkTransactionCounter();
 
-        if ( $automaticRedirect )
-        {
-            eZHTTPTool::redirect( $redirectURI, array(), $this->module->redirectStatus() );
-        }
-        else
+        if ( !$automaticRedirect )
         {
             // Make sure any errors or warnings are reported
             if ( $ini->variable( 'DebugSettings', 'DisplayDebugWarnings' ) === 'enabled' )
@@ -998,9 +1012,10 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             eZDebug::addTimingPoint( "Script end" );
 
             eZDisplayResult( $templateResult );
+            eZExecution::cleanExit();
         }
 
-        eZExecution::cleanExit();
+        return eZHTTPTool::redirect( $redirectURI, array(), $this->module->redirectStatus(), true, true );
     }
 
     /**
@@ -1189,7 +1204,15 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
     {
         $this->requestInit();
 
-        $return = $callback();
+        try
+        {
+            $return = $callback();
+        }
+        catch ( Exception $e )
+        {
+            $this->shutdown( $postReinitialize );
+            throw $e;
+        }
 
         $this->shutdown( $postReinitialize );
 
@@ -1203,6 +1226,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
     {
         eZExecution::cleanup();
         eZExecution::setCleanExit();
+        eZExpiryHandler::shutdown();
         if ( $reInitialize )
             $this->isInitialized = false;
     }

@@ -2,8 +2,8 @@
 /**
  * File containing the eZScript class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  */
@@ -209,6 +209,21 @@ class eZScript
         {
             date_default_timezone_set( $timezone );
         }
+
+        // Check if the current system user is allowed to execute the script
+        $fileIni = eZINI::instance( 'file.ini' );
+        $checkSystemUser = $fileIni->variable( 'FileSettings', 'SystemUserCheck' ) == 'enabled' ;
+        if ( $checkSystemUser && function_exists( 'posix_geteuid' ) )
+        {
+            $currentUser = posix_getpwuid( posix_geteuid() );
+            $requiredUser = $fileIni->variable( 'FileSettings', 'RequiredSystemUser' );
+            if ( $currentUser['name'] !== $requiredUser )
+            {
+                $cli = eZCLI::instance();
+                $cli->error( "Scripts must be executed as '{$requiredUser}'." );
+                exit( 1 );
+            }
+        }
     }
 
     /*!
@@ -387,6 +402,7 @@ class eZScript
 
         eZExecution::cleanup();
         eZExecution::setCleanExit();
+        eZExpiryHandler::shutdown();
         $this->setIsInitialized( false );
         if ( $exitCode !== false )
             $this->ExitCode = $exitCode;

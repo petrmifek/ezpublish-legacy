@@ -4,30 +4,6 @@ Changes to BC and behavior in version 5.2
 INI setting changes
 -------------------
 
-- content.ini[DataTypeSettings]AvailableDatatypes 
-
-  Since 5.2 AvailableDataTypes can be defined with a pair of dataype/class and so take
-  adventage of autoload mechanism reducing the number of file_exists and include calls.
-  You should update those of your extensions defining datatypes accordingly.
-  Ex: AvailableDatatypes[mycustom]=myCustomType
-
-  Even this is now the recommended way to do it, the 'old' way is still valid.
-  The main adventage is that you will gain some file_exists and include calls.
-  You won't need to execute the eZDataType::register method from your dataype
-  class either.
-
-- workflow.ini[EventSettings]AvailableEventTypes 
-
-  Since 5.2 AvailableEventTypes can be defined with a pair of eventype/class and so take
-  adventage of autoload mechanism reducing the number of file_exists and include calls.
-  You should update those of your extensions defining workflows accordingly.
-  Ex: AvailableEventTypes[event_custom]=customType
-
-  Even this is now the recommended way to do it, the 'old' way is still valid.
-  The main adventage is that you will gain some file_exists and include calls.
-  You won't need to execute the eZWorkflowEventType::registerEventType method
-  from your workflow class either.
-
 
 Change of behavior
 ------------------
@@ -68,11 +44,30 @@ Change of behavior
   Links in left menu are now by default disabled in browse mode.
   This can now be changed per item using the new Enabled_<link>[<ui_context>] setting.
 
-- #019411: Avoid file_exists and include calls for registering datatypes and workflows
+- Fix EZP-21358: ezjscAjaxContent: Image's exif fields MakerNote and UserComment must be base64 encoded
 
-  Kernel datatypes and kernel workflow classes take now adventage of the autoload 
-  mechanism. Autoload generator add these clasess to the autoload array, so there's no 
-  need to do any of the file_exists or include calls.
+  ezjscAjaxContent now returns image's exif fields MakerNote and UserComment base64 encoded.
+
+- The eZDFSFileHandlerMySQLiBackend::TABLE_METADATA constant has been removed
+
+  See http://jira.ez.no/browse/EZP-18865
+
+- Cluster: MySQLi handler for DFS now uses a separate table to store cache.
+
+  A maintenance operation is recommended in order to remove cache from the main table. If you'd rather not do this
+  operation, you can revert to the old behaviour by setting the cache table to the old one. This can be done by
+  setting the CLUSTER_METADATA_TABLE_CACHE to ezdfsfile in config.cluster.php.
+
+  More information can be found on the online documentation.
+
+- Globals in scripts is no longer supported (not working via ezpublish:legacy:script)
+
+  PHP Scripts executed via command line no longer supports assuming global variables in them.
+  This was broken earlier in 5.x when we introduced Symfony command ezpublish:legacy:script
+  to be able to execute legacy scripts while still making sure the integration works. This
+  approach can not technically work with globals, so make sure to refactor your extensions
+  in similar way(s) to how we are doing it in the legacy kernel:
+  - https://github.com/ezsystems/ezpublish-legacy/pull/827
 
 
 Removed features
@@ -81,6 +76,11 @@ Removed features
 
 Removed constants
 -----------------
+
+- eZContentLanguage::MAX_COUNT
+
+  The number of languages supported cannot be hold in a constant anymore, the
+  method eZContentLanguage::maxCount() should be used instead.
 
 
 Removed globals

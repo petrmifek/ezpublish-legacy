@@ -2,8 +2,8 @@
 /**
  * File containing the ezpMobileDeviceDetectTest class
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package tests
  */
@@ -21,6 +21,7 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
 
         // Enable mobile device detection
         ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'DetectMobileDevice', 'enabled' );
+        ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'MobileSiteAccessList', array( 'eng' ) );
 
         $this->mobileDeviceDetect = $this->getMock( 'ezpMobileDeviceDetect', null, array( $this->getMock( 'ezpMobileDeviceRegexpFilter', null ) ) );
     }
@@ -41,6 +42,17 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
     public function testIsEnabled()
     {
         $this->assertTrue( $this->mobileDeviceDetect->isEnabled() );
+    }
+
+    /**
+     * Tests if mobile device detection is enabled but MobileSiteAccessList is not provided
+     *
+     */
+    public function testIsEnabledBadSetting()
+    {
+        ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'MobileSiteAccessList', '' );
+
+        $this->assertFalse( $this->mobileDeviceDetect->isEnabled() );
     }
 
     /**

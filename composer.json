@@ -4,13 +4,47 @@
     "homepage":    "http://share.ez.no",
     "license":     "GPL-2.0",
     "type":        "ezpublish-legacy",
+    "suggest": {
+        "php-64bit": "For support of more than 30 languages, a 64bit php installation on all involved prod/dev machines is required",
+        "ext-curl": "Curl provides better support for interacting with other servers, like downloading packages over SSL",
+        "ext-gd": "Unless you have ImageMagic installed GD is required for eZ Publish to be able to manipulate images",
+        "ext-mysqli": "Mysqli is the default database handler used by eZ Publish",
+        "ext-pcntl": "If you plan to take advantage of eZ Publish Async publishing feature, then pcntl extension is required"
+    },
     "require": {
         "php": ">=5.3.3",
-        "ezsystems/ezpublish-legacy-installer": "*"
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "ext-mbstring": "*",
+        "ext-pcre": "*",
+        "ext-json": "*",
+        "ext-iconv": "*",
+        "ext-reflection": "*",
+        "ext-session": "*",
+        "ext-spl": "*",
+        "ext-simplexml": "*",
+        "ezsystems/ezpublish-legacy-installer": "*",
+        "zetacomponents/archive": "dev-master#d0caff8",
+        "zetacomponents/authentication": "dev-master#c422670",
+        "zetacomponents/authentication-database-tiein": "dev-master#56d1e0a",
+        "zetacomponents/cache": "dev-master#34fa794",
+        "zetacomponents/configuration": "dev-master#10ae09f",
+        "zetacomponents/console-tools": "dev-master#90156ab",
+        "zetacomponents/database": "dev-master#0e8ddef",
+        "zetacomponents/debug": "dev-master#0d8cc8f",
+        "zetacomponents/event-log": "dev-master#eee54a1",
+        "zetacomponents/feed": "dev-master#e0190e9",
+        "zetacomponents/image-conversion": "dev-master#36f34c8",
+        "zetacomponents/mail": "1.8.*@beta",
+        "zetacomponents/mvc-tools": "dev-master#6f2c1eb",
+        "zetacomponents/mvc-authentication-tiein": "dev-master#9bae3a7",
+        "zetacomponents/persistent-object": "dev-master#a4c8b95",
+        "zetacomponents/php-generator": "dev-master#b51935e",
+        "zetacomponents/signal-slot": "dev-master#74deb41",
+        "zetacomponents/system-information": "dev-master#6743362",
+        "zetacomponents/webdav": "1.1.*"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "5.2.x-dev"
-        }
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
     }
 }

@@ -2,8 +2,8 @@
 /**
  * File containing the eZContentObjectAttribute class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package kernel
  */
@@ -30,6 +30,7 @@ class eZContentObjectAttribute extends eZPersistentObject
         $this->InputParameters = false;
         $this->HasValidationError = false;
         $this->DataTypeCustom = null;
+        $this->DataTypeString = null;
         $this->eZPersistentObject( $row );
     }
 
@@ -888,11 +889,11 @@ class eZContentObjectAttribute extends eZPersistentObject
             $dataType->postInitializeObjectAttribute( $this, $currentVersion, $originalContentObjectAttribute );
     }
 
-    /*!
-     Remove the attribute by using the datatype.
-     \note Transaction unsafe. If you call several transaction unsafe methods you must enclose
-     the calls within a db transaction; thus within db->begin and db->commit.
-    */
+    /**
+     * Remove the attribute $id by using the datatype.
+     * @param int $id
+     * @param int $currentVersion Version number to remove the attribute for. If null, all versions are removed.
+     */
     function removeThis( $id, $currentVersion = null )
     {
         $dataType = $this->dataType();
@@ -1030,9 +1031,10 @@ class eZContentObjectAttribute extends eZPersistentObject
         return $tmp;
     }
 
-    /*!
-     Returns the data type class for the current attribute.
-    */
+    /**
+     * Returns the data type class for the current attribute.
+     * @return eZDataType
+     */
     function dataType()
     {
         $dataType = null;

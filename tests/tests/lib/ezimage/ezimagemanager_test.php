@@ -2,8 +2,8 @@
 /**
  * File containing the eZImageManagerTest class.
  *
- * @copyright Copyright (C) 1999-2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+ * @copyright Copyright (C) eZ Systems AS. All rights reserved.
+ * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  * @package tests
  */
@@ -61,8 +61,8 @@ class eZImageManagerTest extends ezpTestCase
      */
     public function testMultiHandlerAlias()
     {
-        if ( !self::gdIsEnabled() or !self::imageMagickIsEnabled() )
-            $this->markTestSkipped( 'GD and/or ImageMagick are not enabled' );
+        if ( !self::gdIsEnabled() && !self::imageMagickIsEnabled() )
+            $this->markTestSkipped( 'Neither GD nor ImageMagick are enabled' );
 
         $aliasList = $this->imageIni->variable( 'AliasSettings', 'AliasList' );
         array_push( $aliasList, 'multihandler' );
