@@ -212,10 +212,18 @@ var eZOEPopupUtils = {
             }
             else if ( s.tagName === 'link' )
             {
-                var tempid = args['id'];
-                args['id'] = '__mce_tmp';
+                var links, linkClass = 'ezoeInsertedLink', origClass;
+
+                origClass = args['class'];
+                args['class'] = args['class'] ? args['class'] + " " + linkClass : linkClass;
                 ed.execCommand('mceInsertLink', false, args, {skip_undo : 1} );
-                s.editorElement = ed.dom.get('__mce_tmp');
+                links = ed.dom.select('.' + linkClass);
+                tinymce.each(links, function (link) {
+                    ed.dom.removeClass(link, linkClass);
+                });
+                s.editorElement = links[0];
+                args['class'] = origClass;
+
                 // fixup if we are inside embed tag
                 if ( tmp = eZOEPopupUtils.getParentByTag( s.editorElement, 'div,span', 'ezoeItemNonEditable' ) )
                 {
@@ -226,7 +234,6 @@ var eZOEPopupUtils = {
                     tmp.parentNode.insertBefore(s.editorElement, tmp);
                     s.editorElement.appendChild( tmp );
                 }
-                args['id'] = tempid;
             }
             else if ( eZOEPopupUtils.xmlToXhtmlHash[s.tagName] )
             {
@@ -603,12 +610,16 @@ var eZOEPopupUtils = {
         };
         jQuery( '#' + node + ' input,#' + node + ' select' ).each(function( i, el )
         {
-            var o = jQuery( el ), name = el.name;
+            var o = jQuery( el ), name = el.name, v;
             if ( o.hasClass('mceItemSkip') ) return;
             if ( name === 'class' )
-                var v = jQuery.trim( cssReplace( editorElement.className ) );
-            else 
-                var v = tinyMCEPopup.editor.dom.getAttrib( editorElement, name );//editorElement.getAttribute( name );
+                v = jQuery.trim( cssReplace( editorElement.className ) );
+            else {
+                v = tinyMCEPopup.editor.dom.getAttrib( editorElement, name );
+                if ( !v && tinymce.DOM.getAttrib(editorElement, 'style') && editorElement.style[name.toLowerCase()]  ) {
+                    v = editorElement.style[name.toLowerCase()];
+                }
+            }
             if ( v !== false && v !== null && v !== undefined )
             {
                 if ( handler[el.id] !== undefined && handler[el.id].call !== undefined )
@@ -834,7 +845,8 @@ var eZOEPopupUtils = {
                    {
                        tag = document.createElement("span");
                        tag.className = 'image_preview';
-                       tag.innerHTML += ' <a href="#">' + ed.getLang('preview.preview_desc')  + '<img src="' + ed.settings.ez_root_url + n.data_map[ n.image_attributes[imageIndex] ].content[eZOEPopupUtils.settings.browseImageAlias].url + '" /></a>';
+                       var previewUrl = ed.settings.ez_root_url + encodeURI( n.data_map[ n.image_attributes[imageIndex] ].content[eZOEPopupUtils.settings.browseImageAlias].url )
+                       tag.innerHTML += ' <a href="#">' + ed.getLang('preview.preview_desc')  + '<img src="' + previewUrl + '" /></a>';
                        td.appendChild( tag );
                        hasImage = true;
                    }

@@ -309,7 +309,7 @@ class eZCache
     /**
      * Finds all cache entries using tag $tagName.
      *
-     * @param string $tagName The tag name
+     * @param string $tagName The tag name, or comma-separated list of names
      * @param bool|array $cacheInfoList The list of cache info per entry
      * @return array An array with cache items.
      */
@@ -319,12 +319,17 @@ class eZCache
             $cacheInfoList = eZCache::fetchList();
 
         $cacheEntries = array();
+        $tagList = explode( ',', $tagName );
         foreach ( $cacheInfoList as $cacheInfo )
         {
-            $tagList = $cacheInfo['tag'];
-            if ( $tagList !== false and in_array( $tagName, $tagList ) )
+            if ( !is_array( $cacheInfo['tag'] ) )
+                continue;
+
+            $matchingTags = array_intersect( $tagList, $cacheInfo['tag'] );
+            if ( !empty( $matchingTags ) )
                 $cacheEntries[] = $cacheInfo;
         }
+
         return $cacheEntries;
     }
 
@@ -514,6 +519,11 @@ class eZCache
                 return;
             }
 
+            if ( !file_exists( $cachePath ) )
+            {
+                return;
+            }
+
             if ( is_file( $cachePath ) )
             {
                 $handler = eZFileHandler::instance( false );
@@ -535,6 +545,7 @@ class eZCache
         $expiryHandler = eZExpiryHandler::instance();
         $expiryHandler->setTimestamp( 'image-manager-alias', time() );
         $expiryHandler->store();
+        ezpEvent::getInstance()->notify( 'image/invalidateAliases' );
     }
 
     /**
@@ -770,6 +781,7 @@ class eZCache
         $handler->setTimestamp( $cacheItem['expiry-key'], time() );
         $handler->store();
 
+        eZExtension::clearActiveExtensionsCache();
         eZExtension::clearActiveExtensionsMemoryCache();
     }
 

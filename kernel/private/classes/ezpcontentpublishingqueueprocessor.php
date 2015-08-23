@@ -28,6 +28,14 @@ class ezpContentPublishingQueueProcessor
         // output to log by default
         $this->setOutput( new ezpAsynchronousPublisherLogOutput );
 
+        // initiates timer for the DB cleanup process
+        $this->cleanupLastTime = time();
+        $this->cleanupInterval = $this->contentINI->variable( 'PublishingSettings', 'AsynchronousCleanupInterval' );
+        $this->cleanupAgeLimit = $this->contentINI->variable( 'PublishingSettings', 'AsynchronousCleanupAgeLimit' );
+
+        // initiate current time for cache refresh
+        $this->lastRefreshTimestamp = time();
+
         // Queue reader handler
         $this->queueReader = $this->contentINI->variable( 'PublishingSettings', 'AsynchronousPublishingQueueReader' );
         $reflection = new ReflectionClass( $this->queueReader );
@@ -78,39 +86,46 @@ class ezpContentPublishingQueueProcessor
         while ( $this->canProcess )
         {
             try {
-                /**
-                 * @var ezpContentPublishingProcess
-                 */
-                $publishingItem = call_user_func( array( $this->queueReader, 'next' ) );
-                if ( $publishingItem !== false )
-                {
-                    if ( !$this->isSlotAvailable() )
-                    {
-                        $this->out->write( "No slot is available", 'async.log' );
-                        sleep ( 1 );
-                        continue;
-                    }
-                    else
-                    {
-                        $this->out->write( "Processing item #" . $publishingItem->attribute( 'ezcontentobject_version_id' ), 'async.log' );
-                        $pid = $publishingItem->publish();
-                        pcntl_signal( SIGINT, $this->signalHandler );
-                        $this->currentJobs[$pid] = $publishingItem;
-
-                        // In the event that a signal for this pid was caught before we get here, it will be in our
-                        // signalQueue array
-                        // Process it now as if we'd just received the signal
-                        if( isset( $this->signalQueue[$pid] ) )
-                        {
-                            $this->out->write( "found $pid in the signal queue, processing it now" );
-                            $this->childSignalHandler( SIGCHLD, $pid, $this->signalQueue[$pid] );
-                            unset( $this->signalQueue[$pid] );
-                        }
-                    }
-                }
-                else
+                $this->cleanupFinishedProcesses();
+                /** @var ezpContentPublishingProcess $publishingItem */
+                $publishingItem = $this->getNextItem();
+                if ( $publishingItem === false )
                 {
                     sleep( $this->sleepInterval );
+                    continue;
+                }
+
+                if ( !$this->isSlotAvailable() )
+                {
+                    $this->out->write( "No slot is available", 'async.log' );
+                    sleep( $this->sleepInterval );
+                    continue;
+                }
+
+                $this->out->write(
+                    sprintf(
+                        "Processing item #%d (content %d.%d)",
+                        $publishingItem->attribute( 'ezcontentobject_version_id' ),
+                        $publishingItem->version()->attribute( 'contentobject_id' ),
+                        $publishingItem->version()->attribute( 'version' )
+                    ),
+                    'async.log'
+                );
+
+                $this->refreshCacheStateInfo();
+
+                $pid = $publishingItem->publish();
+                pcntl_signal( SIGINT, $this->signalHandler );
+                $this->currentJobs[$pid] = $publishingItem;
+
+                // In the event that a signal for this pid was caught before we get here, it will be in our
+                // signalQueue array
+                // Process it now as if we'd just received the signal
+                if ( isset( $this->signalQueue[$pid] ) )
+                {
+                    $this->out->write( "found $pid in the signal queue, processing it now" );
+                    $this->childSignalHandler( SIGCHLD, $pid, $this->signalQueue[$pid] );
+                    unset( $this->signalQueue[$pid] );
                 }
             } catch ( eZDBException $e ) {
                 $this->out->write( "Database error #" . $e->getCode() . ": " . $e->getMessage() );
@@ -129,6 +144,22 @@ class ezpContentPublishingQueueProcessor
     }
 
     /**
+     * Refreshes/reloads cache and other state information periodically.
+     */
+    private function refreshCacheStateInfo()
+    {
+        if ( time() < ( $this->lastRefreshTimestamp + $this->sleepInterval ) )
+        {
+            return;
+        }
+
+        // Reload expiry timestamps
+        eZExpiryHandler::instance()->restore();
+
+        $this->lastRefreshTimestamp = time();
+    }
+
+    /**
      * Checks WORKING processes, and removes from the queue those who are dead
      *
      * @return void
@@ -141,6 +172,42 @@ class ezpContentPublishingQueueProcessor
             if ( !$process->isAlive() )
             {
                 $process->reset();
+            }
+        }
+    }
+
+    /**
+     * Removes FINISHED processes rows from the db (in one db call)
+     * method self-manages the removal, based on the defined cleanupInterval and cleanupAgeLimit
+     *
+     * @return void
+     */
+    private function cleanupFinishedProcesses()
+    {
+        if ( time() < ( $this->cleanupLastTime + $this->cleanupInterval ) )
+        {
+            return;
+        }
+
+        $processes = count( ezpContentPublishingProcess::fetchProcesses( ezpContentPublishingProcess::STATUS_FINISHED ) );
+        if ( $processes > 0 )
+        {
+            //Remove all objects at once
+            // this is required as the MySQL connection might be closed anytime by a fork
+            try
+            {
+                eZDebug::writeNotice( "ASYNC:: removing processes entries marked as STATUS_FINISHED in database.");
+                $db = eZDB::instance();
+                eZDB::setInstance( null );
+                $deleteBefore = time() - $this->cleanupAgeLimit;
+                $definition = ezpContentPublishingProcess::definition();
+                $processTable = $definition['name'];
+                $db->query( "DELETE from ". $processTable. " WHERE status =".  ezpContentPublishingProcess::STATUS_FINISHED. " AND finished < ". $deleteBefore );
+                $this->cleanupLastTime = time();
+            }
+            catch( eZDBException $e ) 
+            {
+                // Do nothing, this will be retried until the DB is back up
             }
         }
     }
@@ -252,6 +319,14 @@ class ezpContentPublishingQueueProcessor
     }
 
     /**
+     * @return mixed
+     */
+    private function getNextItem()
+    {
+        return call_user_func( array( $this->queueReader, 'next' ) );
+    }
+
+    /**
      * @var eZINI
      */
     private $contentINI;
@@ -287,5 +362,35 @@ class ezpContentPublishingQueueProcessor
      * @var callback
      */
     private $signalHandler;
+
+    /**
+     * @var ezpContentPublishingQueueReaderInterface
+     */
+    private $queueReader;
+
+    /**
+     * Time counter for cleanup of finished processes
+     * @var int
+     */
+    private $cleanupLastTime;
+
+     /**
+     * Time counter for refresh of cache/state information
+     * @var int
+     */
+    private $lastRefreshTimestamp;
+
+    /**
+     * Interval for cleanup of finished processes. Default value is 12 hours in seconds
+     * @var int
+     */
+    private $cleanupInterval = 43200;
+
+    /**
+     * All finished processes after this age limit will be cleaned up.
+     * Default value is a week (in seconds)
+     * @var int
+     */
+    private $cleanupAgeLimit = 604800;
 }
 ?>

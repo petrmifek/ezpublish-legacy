@@ -21679,7 +21679,7 @@ This functionality is also available at a later time from the Administration Int
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Opensource software is nothing without a vibrant community!</source>
+        <source>Open source software is nothing without a vibrant community!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24721,11 +24721,8 @@ your account.</source>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>design/starndard/node</name>
     <message>
-        <source>Are you sure you want to remove these items?</source>
+        <source>Item can not be found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -235,8 +235,11 @@ class eZScript
     */
     function initialize()
     {
-        if( ob_get_length() != 0 )
-            ob_end_clean();
+        if ( !ezpKernel::hasInstance() )
+        {
+            if ( ob_get_length() != 0 )
+                ob_end_clean();
+        }
 
         // Initialize text codec settings
         $this->updateTextCodecSettings();
@@ -1217,8 +1220,11 @@ function eZFatalError()
 /*!
   Dummy function, required by some scripts in eZ Publish.
 */
-function eZUpdateDebugSettings( $useDebug = null )
+if ( !function_exists( 'eZUpdateDebugSettings' ) )
 {
+    function eZUpdateDebugSettings( $useDebug = null )
+    {
+    }
 }
 
 /*!

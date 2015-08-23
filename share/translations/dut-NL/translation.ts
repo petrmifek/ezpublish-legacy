@@ -22972,7 +22972,7 @@ Deze functionaliteit is ook beschikbaar op een later tijdstip vanaf de beheerint
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Opensource software is nothing without a vibrant community!</source>
+        <source>Open source software is nothing without a vibrant community!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26073,12 +26073,9 @@ adres verzonden. Volg de instructies in deze e-mail om uw account te activeren.<
         <source>Language</source>
         <translation>Taal</translation>
     </message>
-</context>
-<context>
-    <name>design/starndard/node</name>
     <message>
-        <source>Are you sure you want to remove these items?</source>
-        <translation>Weet u zeker dat u deze items wil verwijderen?</translation>
+        <source>Item can not be found</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

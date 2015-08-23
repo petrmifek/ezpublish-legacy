@@ -812,6 +812,16 @@ You will need to change the class of the node by using the swap functionality.' 
         foreach ( $this->fetchAttributes() as $attribute )
         {
             $dataType = $attribute->dataType();
+
+            if ( $dataType === null )
+            {
+                eZDebug::writeError(
+                    "Skipping removal of class attribute for non-existent datatype " . $attribute->DataTypeString,
+                    __METHOD__
+                );
+                continue;
+            }
+
             if ( !$dataType->isClassAttributeRemovable( $attribute ) )
             {
                 $info = $dataType->classAttributeRemovableInformation( $attribute, $includeAll );
@@ -857,6 +867,14 @@ You will need to change the class of the node by using the swap functionality.' 
             foreach ( $classAttributes as $classAttribute )
             {
                 $dataType = $classAttribute->dataType();
+                if ( $dataType === null )
+                {
+                    eZDebug::writeError(
+                        "Skipping removal of class attribute for non-existent datatype " . $classAttribute->DataTypeString,
+                        __METHOD__
+                    );
+                    continue;
+                }
                 $dataType->deleteStoredClassAttribute( $classAttribute, $version );
             }
             eZPersistentObject::removeObject( eZContentClassAttribute::definition(),

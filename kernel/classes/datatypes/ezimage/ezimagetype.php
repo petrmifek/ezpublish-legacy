@@ -46,6 +46,13 @@ class eZImageType extends eZDataType
     {
         $imageHandler = $contentObjectAttribute->attribute( "content" );
         $originalAlias = $imageHandler->imageAlias( "original" );
+
+        // check if there is an actual image, 'is_valid' says if there is an image or not
+        if ( $originalAlias['is_valid'] != '1' && empty( $originalAlias['filename'] ) )
+        {
+            return;
+        }
+
         $basenameHashed = md5( $originalAlias["basename"] );
         $trashedFolder = "{$originalAlias["dirpath"]}/trashed";
         $imageHandler->updateAliasPath( $trashedFolder, $basenameHashed );
@@ -57,6 +64,7 @@ class eZImageType extends eZDataType
 
         // Now clean all other aliases, not cleanly registered within the attribute content
         // First get all remaining aliases full path to then safely move them to the trashed folder
+        ezpEvent::getInstance()->notify( 'image/trashAliases', array( $originalAlias['url'] ) );
         $aliasNames = array_keys( $imageHandler->aliasList() );
         $aliasesPath = array();
         foreach ( $aliasNames as $aliasName )
@@ -178,7 +186,11 @@ class eZImageType extends eZDataType
         /** @var eZImageAliasHandler $imageHandler */
         $imageHandler = $contentObjectAttribute->attribute( 'content' );
         if ( $imageHandler )
+        {
+            $imageHandler->setAttribute( 'alternative_text', false );
             $imageHandler->removeAliases();
+            $imageHandler->store( $contentObjectAttribute );
+        }
     }
 
     /**
@@ -472,11 +484,7 @@ class eZImageType extends eZDataType
     {
         if( $action == "delete_image" )
         {
-            $content = $contentObjectAttribute->attribute( 'content' );
-            if ( $content )
-            {
-                $content->removeAliases();
-            }
+            $this->deleteStoredObjectAttribute( $contentObjectAttribute );
         }
     }
 

@@ -27,6 +27,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
     const SORT_FIELD_MODIFIED_SUBNODE = 10;
     const SORT_FIELD_NODE_ID = 11;
     const SORT_FIELD_CONTENTOBJECT_ID = 12;
+    const SORT_FIELD_VISIBILITY = 13;
 
     const SORT_ORDER_DESC = 0;
     const SORT_ORDER_ASC = 1;
@@ -643,6 +644,10 @@ class eZContentObjectTreeNode extends eZPersistentObject
                         {
                             $sortingFields .= $treeTableName . '.priority';
                         } break;
+                        case 'visibility':
+                        {
+                            $sortingFields .= $treeTableName . '.is_invisible';
+                        } break;
                         case 'name':
                         {
                             $sortingFields .= 'ezcontentobject_name.name';
@@ -1012,11 +1017,13 @@ class eZContentObjectTreeNode extends eZPersistentObject
                     $filterValue = is_array( $filter[2] ) ? '' : $db->escapeString( $filter[2] );
 
                     $useAttributeFilter = false;
+                    $filterFieldType = 'integer';
                     switch ( $filterAttributeID )
                     {
                         case 'path':
                         {
                             $filterField = 'path_string';
+                            $filterFieldType = 'string';
                         } break;
                         case 'published':
                         {
@@ -1098,11 +1105,13 @@ class eZContentObjectTreeNode extends eZPersistentObject
                         case 'class_identifier':
                         {
                             $filterField = 'ezcontentclass.identifier';
+                            $filterFieldType = 'string';
                         } break;
                         case 'class_name':
                         {
                             $classNameFilter = eZContentClassName::sqlFilter();
                             $filterField = $classNameFilter['nameField'];
+                            $filterFieldType = 'string';
                             $filterSQL['from'] .= " INNER JOIN $classNameFilter[from] ON ($classNameFilter[where])";
                         } break;
                         case 'priority':
@@ -1112,6 +1121,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
                         case 'name':
                         {
                             $filterField = 'ezcontentobject_name.name';
+                            $filterFieldType = 'string';
                         } break;
                         case 'owner':
                         {
@@ -1279,7 +1289,15 @@ class eZContentObjectTreeNode extends eZPersistentObject
                                     while ( list( $key, $value ) = each( $filter[2] ) )
                                     {
                                         // Non-numerics must be escaped to avoid SQL injection
-                                        $filter[2][$key] = is_numeric( $value ) ? $value : "'" . $db->escapeString( $value ) . "'";
+                                        switch ( $filterFieldType )
+                                        {
+                                            case 'string':
+                                                $filter[2][$key] = "'" . $db->escapeString( $value ) . "'";
+                                                break;
+                                            case 'integer':
+                                            default:
+                                                $filter[2][$key] = (int) $value;
+                                        }
                                     }
                                     $filterValue = '(' .  implode( ",", $filter[2] ) . ')';
                                 }
@@ -1865,7 +1883,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
         {
             return $limitation;
         }
-        
+
         $currentUser = eZUser::currentUser();
         $currentUserID = $currentUser->attribute( 'contentobject_id' );
         $limitationList = array();
@@ -2062,7 +2080,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
 
         if ( $asObject )
         {
-            $retNodeList = eZContentObjectTreeNode::makeObjectsArray( $nodeListArray );
+            $retNodeList = eZContentObjectTreeNode::makeObjectsArray( $nodeListArray, true, null, $language );
             if ( $loadDataMap === true )
                 eZContentObject::fillNodeListAttributes( $retNodeList );
             else if ( $loadDataMap && is_numeric( $loadDataMap ) && $loadDataMap >= count( $retNodeList ) )
@@ -2298,7 +2316,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
 
         if ( $asObject )
         {
-            $retNodeList = eZContentObjectTreeNode::makeObjectsArray( $nodeListArray );
+            $retNodeList = eZContentObjectTreeNode::makeObjectsArray( $nodeListArray, true, null, $language );
         }
         else
         {
@@ -2718,6 +2736,8 @@ class eZContentObjectTreeNode extends eZPersistentObject
                 return 'node_id';
             case self::SORT_FIELD_CONTENTOBJECT_ID:
                 return 'contentobject_id';
+            case self::SORT_FIELD_VISIBILITY:
+                return 'is_invisible';
         }
     }
 
@@ -2755,6 +2775,8 @@ class eZContentObjectTreeNode extends eZPersistentObject
                 return self::SORT_FIELD_NODE_ID;
             case 'contentobject_id':
                 return self::SORT_FIELD_CONTENTOBJECT_ID;
+            case 'is_invisible':
+                return self::SORT_FIELD_VISIBILITY;
         }
     }
 
@@ -3125,7 +3147,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
         {
             if ( $asObject )
             {
-                $returnValue = eZContentObjectTreeNode::makeObjectsArray( $nodeListArray );
+                $returnValue = eZContentObjectTreeNode::makeObjectsArray( $nodeListArray, true, null, $lang );
                 if ( count( $returnValue ) === 1 )
                     $returnValue = $returnValue[0];
             }
@@ -5199,7 +5221,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
     // This code is automatically generated from templates/classcreatelist.ctpl
     // code-template::auto-generated:END can-instantiate-class-list
 
-    static public function makeObjectsArray( $array , $with_contentobject = true, array $propertiesOverride = null )
+    static public function makeObjectsArray( $array , $with_contentobject = true, array $propertiesOverride = null, $lang = null )
     {
         $retNodes = array();
         if ( !is_array( $array ) )
@@ -5288,7 +5310,11 @@ class eZContentObjectTreeNode extends eZPersistentObject
                 }
                 if ( isset( $node['real_translation'] ) && $node['real_translation'] != '' )
                 {
-                    $object->CurrentLanguage = $node['real_translation'];
+                    if ( $node['real_translation'] == $lang )
+                    {
+                        $object->CurrentLanguage = $node['real_translation'];
+                    }
+
                     $contentObject->CurrentLanguage = $node['real_translation'];
                 }
                 if ( $node['node_id'] == 1 )
@@ -5725,7 +5751,10 @@ class eZContentObjectTreeNode extends eZPersistentObject
         }
         $contentobject_id = $this->attribute( 'contentobject_id' );
         $obj = eZContentObject::fetch( $contentobject_id );
-        $obj->setCurrentLanguage( $this->CurrentLanguage );
+        if ( $this->CurrentLanguage )
+        {
+            $obj->setCurrentLanguage( $this->CurrentLanguage );
+        }
         $this->ContentObject = $obj;
         return $obj;
     }

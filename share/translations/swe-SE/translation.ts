@@ -23035,7 +23035,7 @@ Denna funktionalitet finns också tillgänglig senare via Administrationsgränss
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Opensource software is nothing without a vibrant community!</source>
+        <source>Open source software is nothing without a vibrant community!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26138,12 +26138,9 @@ ditt konto.</translation>
         <source>Language</source>
         <translation>Språk</translation>
     </message>
-</context>
-<context>
-    <name>design/starndard/node</name>
     <message>
-        <source>Are you sure you want to remove these items?</source>
-        <translation>Är du säker att du vill radera dessa objekt?</translation>
+        <source>Item can not be found</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
