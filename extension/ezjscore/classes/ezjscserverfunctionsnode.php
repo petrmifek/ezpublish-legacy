@@ -212,7 +212,7 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
         if ( $http->hasPostVariable( 'ContentObjectID' ) )
         {
             $objectID = $http->postVariable( 'ContentObjectID' );
-            eZContentCacheManager::clearContentCache( $objectID );
+            eZContentCacheManager::clearContentCacheIfNeeded( $objectID );
         }
     }
 
@@ -233,6 +233,9 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
                 break;
             case 'published_date':
                 $sortKey = 'published';
+                break;
+            case 'hidden_status_string':
+                $sortKey = 'visibility';
                 break;
             default:
                 $sortKey = $sort;

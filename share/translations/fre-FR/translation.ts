@@ -23123,7 +23123,7 @@ Ces fonctionnalités sont également disponible plus tard via l&apos;interface d
         <translation>Attention : Le site web fourni par défaut se base souvent sur les données se trouvant dans un paquetage. C&apos;est pourquoi il est fortement recommandé de faire correspondre la langue du paquetage avec votre langue primaire, sinon vos devrez ajuster la configuration et les fichiers de gabarit pour que cela fonctionne.</translation>
     </message>
     <message>
-        <source>Opensource software is nothing without a vibrant community!</source>
+        <source>Open source software is nothing without a vibrant community!</source>
         <translation>Un logiciel opensource n&apos;est rien sans une une communauté vivante !</translation>
     </message>
     <message>
@@ -25510,7 +25510,7 @@ your account.</source>
     </message>
     <message>
         <source>Your registration has been approved. You can login with your account %username.</source>
-        <translation>Votre inscription a été approuvée. Vous pouvez maintenant vous identifier avec compte %username.</translation>
+        <translation>Votre inscription a été approuvée. Vous pouvez maintenant vous identifier avec votre compte %username.</translation>
     </message>
     <message>
         <source>Click the following URL to login:</source>
@@ -26228,12 +26228,9 @@ your account.</source>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
-</context>
-<context>
-    <name>design/starndard/node</name>
     <message>
-        <source>Are you sure you want to remove these items?</source>
-        <translation>Voulez-vous vraiment supprimer ces éléments ?</translation>
+        <source>Item can not be found</source>
+        <translation>Element introuvable</translation>
     </message>
 </context>
 <context>
@@ -28435,7 +28432,7 @@ your account.</source>
     </message>
     <message>
         <source>Enter account information</source>
-        <translation>Entez les informations du compte utilisateur</translation>
+        <translation>Entrez les informations du compte utilisateur</translation>
     </message>
     <message>
         <source>VAT types</source>

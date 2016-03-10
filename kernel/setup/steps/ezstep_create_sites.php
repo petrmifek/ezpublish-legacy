@@ -660,13 +660,13 @@ id=$engLanguageID";
             $db->query( $updateSql );
             eZContentLanguage::expireCache();
             $primaryLanguageObj = eZContentLanguage::fetchByLocale( $primaryLanguageLocaleCode );
-            /*
+
             // Add it if it is missing (most likely)
             if ( !$primaryLanguageObj )
             {
                 $primaryLanguageObj = eZContentLanguage::addLanguage( $primaryLanguageLocaleCode, $primaryLanguageName );
             }
-            */
+
             $primaryLanguageID = (int)$primaryLanguageObj->attribute( 'id' );
 
             // Find objects which are always available
@@ -1021,7 +1021,12 @@ language_locale='eng-GB'";
         $extensionsToEnable = array();
         // Included in "fat" install, needs to override $extraCommonSettings extensions
         $extensionsPrepended = array( 'ezjscore', /*@EZP_BUILD_EXTENSION_ACTIVATE@*/ 'ezoe', 'ezformtoken' );
-        foreach ( array( 'ezie', 'ezodf', 'ezprestapiprovider' ) as $extension )
+        foreach (
+            array(
+                'ezie', 'ezodf', 'ezprestapiprovider', 'ezmultiupload', 'eztags',
+                'ezautosave', 'ez_network', 'ez_network_demo'
+            ) as $extension
+        )
         {
             if ( file_exists( "extension/$extension" ) )
             {
@@ -1119,12 +1124,21 @@ language_locale='eng-GB'";
                     {
                         $templateLookObject = current( $objectList );
                         $dataMap = $templateLookObject->fetchDataMap();
-                        $dataMap[ 'title' ]->setAttribute( 'data_text', $siteINIChanges['SiteSettings']['SiteName'] );
-                        $dataMap[ 'title' ]->store();
-                        $dataMap[ 'siteurl' ]->setAttribute( 'data_text', $siteINIChanges['SiteSettings']['SiteURL'] );
-                        $dataMap[ 'siteurl' ]->store();
-                        $dataMap[ 'email' ]->setAttribute( 'data_text', $siteINIChanges['MailSettings']['AdminEmail'] );
-                        $dataMap[ 'email' ]->store();
+                        if ( isset( $dataMap[ 'title' ] ) )
+                        {
+                            $dataMap[ 'title' ]->setAttribute( 'data_text', $siteINIChanges['SiteSettings']['SiteName'] );
+                            $dataMap[ 'title' ]->store();
+                        }
+                        if ( isset( $dataMap[ 'siteurl' ] ) )
+                        {
+                            $dataMap[ 'siteurl' ]->setAttribute( 'data_text', $siteINIChanges['SiteSettings']['SiteURL'] );
+                            $dataMap[ 'siteurl' ]->store();
+                        }
+                        if ( isset( $dataMap[ 'email' ] ) )
+                        {
+                            $dataMap[ 'email' ]->setAttribute( 'data_text', $siteINIChanges['MailSettings']['AdminEmail'] );
+                            $dataMap[ 'email' ]->store();
+                        }
                         $objectName = $templateLookClass->contentObjectName( $templateLookObject );
                         $templateLookObject->setName( $objectName );
                         $templateLookObject->store();

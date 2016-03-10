@@ -571,6 +571,18 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
     }
 
     /**
+     * Returns file mime-type / content-type.
+     * @return string|null
+     */
+    public function dataType()
+    {
+        $fileInfo = new finfo( FILEINFO_MIME_TYPE | FILEINFO_SYMLINK );
+        $mimeType = $fileInfo->file( $this->filePath );
+        eZDebugSetting::writeDebug( 'kernel-clustering', $mimeType, "fs::dataType( {$this->filePath} )" );
+        return $mimeType ?: null;
+    }
+
+    /**
      * Returns file modification time.
      *
      * \public
@@ -671,9 +683,13 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
                 if ( file_exists( $path ) )
                     eZDebug::writeError( "File still exists after removal: '$path'", __METHOD__ );
             }
-            else
+            else if ( is_dir( $path ) )
             {
                 eZDir::recursiveDelete( $path );
+            }
+            else
+            {
+                continue;
             }
         }
 
@@ -993,6 +1009,14 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
     public function isLocalFileExpired($expiry, $curtime, $ttl)
     {
         return self::isFileExpired( $this->filePath, @filemtime( $this->filePath ), $expiry, $curtime, $ttl );
+    }
+
+    /**
+     * No transformation is required since files are served from the same host
+     */
+    public function applyServerUri( $filePath )
+    {
+        return $filePath;
     }
 
     public $metaData = null;

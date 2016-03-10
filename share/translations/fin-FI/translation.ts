@@ -23021,7 +23021,7 @@ Tämä toiminto on myös käytettävissä myöhemmin Järjestelmänvalvojan käy
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Opensource software is nothing without a vibrant community!</source>
+        <source>Open source software is nothing without a vibrant community!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26123,12 +26123,9 @@ tilisi.</translation>
         <source>Language</source>
         <translation>Kieli</translation>
     </message>
-</context>
-<context>
-    <name>design/starndard/node</name>
     <message>
-        <source>Are you sure you want to remove these items?</source>
-        <translation type="unfinished">Oletko varma, että haluat poistaa nämä kohteet?</translation>
+        <source>Item can not be found</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

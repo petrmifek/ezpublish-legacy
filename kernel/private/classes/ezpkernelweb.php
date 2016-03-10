@@ -113,26 +113,24 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         if ( isset( $settings['injected-settings'] ) )
         {
             $injectedSettings = array();
-            foreach ( $settings["injected-settings"] as $keySetting => $injectedSetting )
+            foreach ( $settings['injected-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( "/", $keySetting );
+                list( $file, $section, $setting ) = explode( '/', $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
-            // those settings override anything else in local .ini files and
-            // their overrides
+            // Those settings override anything else in local .ini files and their overrides
             eZINI::injectSettings( $injectedSettings );
         }
 
         if ( isset( $settings['injected-merge-settings'] ) )
         {
             $injectedSettings = array();
-            foreach ( $settings["injected-merge-settings"] as $keySetting => $injectedSetting )
+            foreach ( $settings['injected-merge-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( "/", $keySetting );
+                list( $file, $section, $setting ) = explode( '/', $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
-            // those settings override anything else in local .ini files and
-            // their overrides
+            // Those settings override anything else in local .ini files and their overrides
             eZINI::injectMergeSettings( $injectedSettings );
         }
 
@@ -212,26 +210,8 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             }
         );
 
-        eZExecution::addFatalErrorHandler(
-            function()
-            {
-                header("HTTP/1.1 500 Internal Server Error");
-                echo "<b>Fatal error</b>: The web server did not finish its request<br/>";
-                if ( ini_get('display_errors') == 1 )
-                {
-                    if ( eZDebug::isDebugEnabled() )
-                        echo "<p>The execution of eZ Publish was abruptly ended, the debug output is present below.</p>";
-                    else
-                        echo "<p>Debug information can be found in the log files normally placed in var/log/* or by enabling 'DebugOutput' in site.ini</p>";
-                }
-                else
-                {
-                    echo "<p>Contact website owner with current url and info on what you did, and owner will be able to debug the issue further (by enabling 'display_errors' in php.ini).</p>";
-                }
-                eZDisplayResult( null );
-            }
-        );
-        eZExecution::setCleanExit();
+        // Sets up the FatalErrorHandler
+        $this->setupFatalErrorHandler();
 
         // Enable this line to get eZINI debug output
         // eZINI::setIsDebugEnabled( true );
@@ -291,6 +271,38 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
         $this->mobileDeviceDetect = new ezpMobileDeviceDetect( ezpMobileDeviceDetectFilter::getFilter() );
         // eZSession::setSessionArray( $mainRequest->session );
+    }
+
+    private function setupFatalErrorHandler()
+    {
+        $errorINI = eZINI::instance( 'error.ini' );
+        if ( $errorINI->hasVariable( 'ErrorSettings-kernel', 'FatalErrorHandler' ) && is_callable( $errorINI->variable( 'ErrorSettings-kernel', 'FatalErrorHandler' ) ) )
+        {
+            eZExecution::addFatalErrorHandler( $errorINI->variable( 'ErrorSettings-kernel', 'FatalErrorHandler' ) );
+        }
+        else
+        {
+            eZExecution::addFatalErrorHandler(
+                function()
+                {
+                    header("HTTP/1.1 500 Internal Server Error");
+                    echo "<b>Fatal error</b>: The web server did not finish its request<br/>";
+                    if ( ini_get('display_errors') == 1 )
+                    {
+                        if ( eZDebug::isDebugEnabled() )
+                            echo "<p>The execution of eZ Publish was abruptly ended, the debug output is present below.</p>";
+                        else
+                            echo "<p>Debug information can be found in the log files normally placed in var/log/* or by enabling 'DebugOutput' in site.ini</p>";
+                    }
+                    else
+                    {
+                        echo "<p>Contact website owner with current url and info on what you did, and owner will be able to debug the issue further (by enabling 'display_errors' in php.ini).</p>";
+                    }
+                    eZDisplayResult( null );
+                }
+            );
+        }
+        eZExecution::setCleanExit();
     }
 
     /**

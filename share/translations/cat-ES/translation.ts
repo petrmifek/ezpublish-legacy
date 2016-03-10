@@ -23133,7 +23133,7 @@ També podràs fer-ho més endavant de la Interfície d&apos;Administració.</tr
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Opensource software is nothing without a vibrant community!</source>
+        <source>Open source software is nothing without a vibrant community!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26247,12 +26247,9 @@ Segueix les instruccions d&apos;aquest correu per activar el teu compte. </trans
         <source>Language</source>
         <translation>Idioma</translation>
     </message>
-</context>
-<context>
-    <name>design/starndard/node</name>
     <message>
-        <source>Are you sure you want to remove these items?</source>
-        <translation type="unfinished">Estàs segur de voler esborrar aquests elements?</translation>
+        <source>Item can not be found</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

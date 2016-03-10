@@ -402,13 +402,27 @@ else if ( $module->isCurrentAction( 'SwapNode' ) )
     {
         eZDebug::writeWarning( "Content node with ID $selectedNodeID does not exist, cannot use that as exchanging node for node $nodeID",
                                'content/action' );
-        return $module->redirectToView( 'view', array( 'full', 2 ) );
+        return $module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel', array() );
     }
     if ( !$selectedNode->canSwap() )
     {
         eZDebug::writeError( "Cannot use node $selectedNodeID as the exchanging node for $nodeID, the current user does not have edit permission for it",
                              'content/action' );
-        return $module->redirectToView( 'view', array( 'full', 2 ) );
+        return $module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array() );
+    }
+
+    // verify one of the nodes contains children and the other is not a container.
+    if ( !$node->classIsContainer() && $selectedNode->childrenCount() > 0 )
+    {
+        eZDebug::writeError( "Cannot use node $selectedNodeID as the exchanging node for $nodeID, as it contains sub items (node is not container)",
+                             'content/action' );
+        return $module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel', array() );
+    }
+    if ( !$selectedNode->classIsContainer() && $node->childrenCount() > 0 )
+    {
+        eZDebug::writeError( "Cannot use node $selectedNodeID as the exchanging node for $nodeID, as it is not container (node contains sub items)",
+                             'content/action' );
+        return $module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel', array() );
     }
 
     // clear cache.
@@ -1084,7 +1098,7 @@ else if ( $http->hasPostVariable( 'UpdatePriorityButton' ) )
     if ( $http->hasPostVariable( 'ContentObjectID' ) )
     {
         $objectID = $http->postVariable( 'ContentObjectID' );
-        eZContentCacheManager::clearContentCache( $objectID );
+        eZContentCacheManager::clearContentCacheIfNeeded( $objectID );
     }
 
     if ( $http->hasPostVariable( 'RedirectURIAfterPriority' ) )

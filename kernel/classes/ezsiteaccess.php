@@ -547,6 +547,8 @@ class eZSiteAccess
 
             eZSys::setAccessPath( $access['uri_part'], $name );
 
+            eZContentLanguage::expireCache( false );
+
             eZUpdateDebugSettings();
             eZDebugSetting::writeDebug( 'kernel-siteaccess', "Updated settings to use siteaccess '$name'", __METHOD__ );
         }
@@ -721,5 +723,22 @@ class eZSiteAccess
         }
         eZDebug::writeWarning("Tried to find siteaccess based on '$language' but '$sa' is not a valid RelatedSiteAccessList[]", __METHOD__ );
         return null;
+    }
+
+    /**
+     * Checks if $siteAccessName matches a configured siteaccess
+     * @param $siteAccessName
+     * @return bool
+     */
+    public static function exists( $siteAccessName )
+    {
+        foreach ( eZSiteAccess::siteAccessList() as $siteaccessListItem )
+        {
+            if ( $siteaccessListItem['name'] == $siteAccessName )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

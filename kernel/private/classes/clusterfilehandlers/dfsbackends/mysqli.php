@@ -60,6 +60,9 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      */
     protected $maxCopyTries;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->eventHandler = ezpEvent::getInstance();
@@ -105,8 +108,8 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * Connects to the database.
      *
      * @return void
-     * @throw eZClusterHandlerDBNoConnectionException
-     * @throw eZClusterHandlerDBNoDatabaseException
+     * @throws eZClusterHandlerDBNoConnectionException
+     * @throws eZClusterHandlerDBNoDatabaseException
      */
     public function _connect()
     {
@@ -167,10 +170,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
             throw new eZClusterHandlerDBNoDatabaseException( self::$dbparams['dbname'] );*/
 
         // DFS setup
-        if ( $this->dfsbackend === null )
-        {
-            $this->dfsbackend = new eZDFSFileHandlerDFSBackend();
-        }
+        $this->dfsbackend = eZDFSFileHandlerBackendFactory::build();
 
         $charset = trim( $siteINI->variable( 'DatabaseSettings', 'Charset' ) );
         if ( $charset === '' )
@@ -203,7 +203,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * Creates a copy of a file in DB+DFS
      * @param string $srcFilePath Source file
      * @param string $dstFilePath Destination file
-     * @param string $fname
+     * @param bool|string $fname
      * @return bool
      *
      * @see _copyInner
@@ -289,6 +289,8 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * @param bool $fname
      *
      * @see _purgeByLike
+     *
+     * @return bool|eZMySQLBackendError
      */
     public function _purge( $filePath, $onlyExpired = false, $expiry = false, $fname = false )
     {
@@ -323,17 +325,14 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * Purges meta-data and file-data for files matching a pattern using a SQL
      * LIKE syntax.
      *
-     * @param string $like
-     *        SQL LIKE string applied to ezdfsfile.name to look for files to
-     *        purge
-     * @param bool $onlyExpired
-     *        Only purge expired files (ezdfsfile.expired = 1)
-     * @param integer $limit Maximum number of items to purge in one call
-     * @param integer $expiry
-     *        Timestamp used to limit deleted files: only files older than this
-     *        date will be deleted
-     * @param mixed $fname Optional caller name for debugging
+     * @param string $like SQL LIKE string applied to ezdfsfile.name to look for files to purge
+     * @param bool $onlyExpired Only purge expired files (ezdfsfile.expired = 1)
+     * @param int $limit Maximum number of items to purge in one call
+     * @param bool|int $expiry Timestamp used to limit deleted files: only files older than this date will be deleted
+     * @param string|bool $fname Optional caller name for debugging
+     *
      * @see _purge
+     *
      * @return bool|int false if it fails, number of affected rows otherwise
      * @todo This method should also remove the files from disk
      */
@@ -466,7 +465,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      *        SQL LIKE condition applied to ezdfsfile.name to look for files
      *        to delete. Will use name_trunk if the LIKE string matches a
      *        filetype that supports name_trunk.
-     * @param string $fname Optional caller name for debugging
+     * @param bool|string $fname Optional caller name for debugging
      * @return bool
      * @see _deleteByLikeInner
      * @see _delete
@@ -490,8 +489,8 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * Callback used by _deleteByLike to perform the deletion
      *
      * @param string $like
-     * @param mixed $fname
-     * @return
+     * @param string|bool $fname
+     * @return bool|eZMySQLBackendError
      */
     private function _deleteByLikeInner( $like, $fname )
     {
@@ -550,6 +549,13 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         return true;
     }
 
+    /**
+     * @param array $dirList
+     * @param string $commonPath
+     * @param string $commonSuffix
+     * @param string|bool $fname
+     * @return bool|mixed
+     */
     public function _deleteByDirList( $dirList, $commonPath, $commonSuffix, $fname = false )
     {
         if ( $fname )
@@ -560,6 +566,13 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
                                 $dirList, $commonPath, $commonSuffix, $fname );
     }
 
+    /**
+     * @param array $dirList
+     * @param string $commonPath
+     * @param string $commonSuffix
+     * @param string|bool $fname
+     * @return bool
+     */
     protected function _deleteByDirListInner( $dirList, $commonPath, $commonSuffix, $fname )
     {
         foreach ( $dirList as $dirItem )
@@ -594,6 +607,15 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         return true;
     }
 
+    /**
+     * Checks if a file exists
+     *
+     * @param string $filePath
+     * @param string|bool $fname
+     * @param bool $ignoreExpiredFiles
+     * @param bool $checkOnDFS
+     * @return bool
+     */
     public function _exists( $filePath, $fname = false, $ignoreExpiredFiles = true, $checkOnDFS = false )
     {
         if ( $fname )
@@ -623,6 +645,12 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         return $rc;
     }
 
+    /**
+     * Creates a directory and all parent directories in its path, if necessary
+     *
+     * @param string $dir
+     * @return bool
+     */
     protected function __mkdir_p( $dir )
     {
         // create parent directories
@@ -699,7 +727,12 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
             if ( $uniqueName !== true )
             {
-                eZFile::rename( $tmpFilePath, $filePath, false, eZFile::CLEAN_ON_FAILURE | eZFile::APPEND_DEBUG_ON_FAILURE );
+                if( !eZFile::rename( $tmpFilePath, $filePath, false, eZFile::CLEAN_ON_FAILURE | eZFile::APPEND_DEBUG_ON_FAILURE ) )
+                {
+                    usleep( self::TIME_UNTIL_RETRY );
+                    ++$loopCount;
+                    continue;
+                }
             }
             $filePath = ($uniqueName) ? $tmpFilePath : $filePath ;
 
@@ -711,6 +744,11 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
             {
                 return $filePath;
             }
+            // Sizes might have been corrupted by FS problems. Enforcing temp file removal.
+            else if ( file_exists( $tmpFilePath ) )
+            {
+                unlink( $tmpFilePath );
+            }
 
             usleep( self::TIME_UNTIL_RETRY );
             ++$loopCount;
@@ -718,11 +756,15 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         while ( $dfsFileSize > $localFileSize && $loopCount < $this->maxCopyTries );
 
         // Copy from DFS has failed :-(
-        eZDebug::writeError( "Size ($localFileSize) of written data for file '$tmpFilePath' does not match expected size {$metaData['size']}", __METHOD__ );
-        unlink( $tmpFilePath );
+        eZDebug::writeError( "Size ({$localFileSize}) of written data for file '{$filePath}' does not match expected size {$metaData['size']}", __METHOD__ );
         return false;
     }
 
+    /**
+     * @param string $filePath
+     * @param string|bool $fname
+     * @return string|bool
+     */
     public function _fetchContents( $filePath, $fname = false )
     {
         if ( $fname )
@@ -748,8 +790,11 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
     /**
      * Fetches and returns metadata for $filePath
-     * @return array|false file metadata, or false if the file does not exist in
-     *                     database.
+     *
+     * @param string $filePath
+     * @param bool $fname
+     *
+     * @return array|false file metadata, or false if the file does not exist in database.
      */
     function _fetchMetadata( $filePath, $fname = false )
     {
@@ -771,6 +816,12 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         return $metadata;
     }
 
+    /**
+     * @param string $srcPath
+     * @param string $dstPath
+     * @param string|bool $fname
+     * @return bool
+     */
     public function _linkCopy( $srcPath, $dstPath, $fname = false )
     {
         if ( $fname )
@@ -784,8 +835,9 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * Passes $filePath content through
      *
      * @param string $filePath
-     * @param int    $offset  Byte offset to start download from
-     * @param int    $length  Byte length to be sent
+     * @param int $startOffset Byte offset to start download from
+     * @param bool|int $length Byte length to be sent
+     * @param string|bool $fname
      *
      * @return bool
      */
@@ -887,7 +939,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * @param string $filePath
      * @param string $datatype
      * @param string $scope
-     * @param string $fname
+     * @param bool|string $fname
      * @return void
      */
     function _store( $filePath, $datatype, $scope, $fname = false )
@@ -962,8 +1014,8 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * @param string $contents
      * @param string $scope
      * @param string $datatype
-     * @param int $mtime
-     * @param string $fname
+     * @param bool|int $mtime
+     * @param bool|string $fname
      * @return void
      */
     function _storeContents( $filePath, $contents, $scope, $datatype, $mtime = false, $fname = false )
@@ -985,6 +1037,15 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         );
     }
 
+    /**
+     * @param string $filePath
+     * @param string $contents
+     * @param string $scope
+     * @param string $datatype
+     * @param int|bool $curTime
+     * @param string|bool $fname
+     * @return bool|eZMySQLBackendError
+     */
     function _storeContentsInner( $filePath, $contents, $scope, $datatype, $curTime, $fname )
     {
         // Insert file metadata.
@@ -1021,11 +1082,13 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
 
     /**
-     * gets the list of cluster files, filtered by the optional params
-     * @param array $scopes filter by array of scopes to include in the list
-     * @param bool $excludescopes if true, $scopes param acts as an exclude filter
-     * @param string $path filter to include entries only including $path
-     * @param array $limit limits the search to offset limit[0], limit limit[1]
+     * Returns the list of cluster files, filtered by the optional params
+     *
+     * @param array|bool $scopes filter by array of scopes to include in the list
+     * @param bool $excludeScopes if true, $scopes param acts as an exclude filter
+     * @param array|bool $limit limits the search to offset limit[0], limit limit[1]
+     * @param bool|string $path filter to include entries only including $path
+     *
      * @return array|false the db list of entries of false if none found
      */
     public function _getFileList( $scopes = false, $excludeScopes = false, $limit = false, $path = false )
@@ -1099,11 +1162,14 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
     /**
      * Performs an insert of the given items in $array.
+     *
      * @param string $table Name of table to execute insert on.
      * @param array $array Associative array with data to insert, the keys are
      *                     the field names and the values will be quoted
      *                     according to type.
      * @param string $fname Name of caller function (for logging purpuse)
+     *
+     * @return bool|int|string
      */
     function _insert( $table, $array, $fname )
     {
@@ -1125,12 +1191,14 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * the entry instead.
      *
      * @param string $table Name of table to execute insert on.
-     * @param array  array $array Associative array with data to insert, the keys
+     * @param array $array Associative array with data to insert, the keys
      *                     are the field names and the values will be quoted
      *                     according to type.
      * @param string $update Partial update SQL which is executed when entry
      *                       exists.
      * @param string $fname Name of caller function (for logging purpuse)
+     * @param bool $reportError
+     * @return bool|int|string
      */
     protected function _insertUpdate( $table, $array, $update, $fname, $reportError = true )
     {
@@ -1171,11 +1239,10 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * false.
      *
      * @param string $query
-     * @param string $fname The function name that started the query, should
-     *                      contain relevant arguments in the text.
-     * @param string $error Sent to _error() in case of errors
-     * @param bool   $debug If true it will display the fetched row in addition
-     *                      to the SQL.
+     * @param string $fname The function name that started the query, should contain relevant arguments in the text.
+     * @param bool|string $error Sent to _error() in case of errors
+     * @param bool $debug If true it will display the fetched row in addition to the SQL.
+     *
      * @return array|false
      */
     protected function _selectOneRow( $query, $fname, $error = false, $debug = false )
@@ -1190,11 +1257,9 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * false.
      *
      * @param string $query
-     * @param string $fname The function name that started the query, should
-     *                      contain relevant arguments in the text.
-     * @param string $error Sent to _error() in case of errors
-     * @param bool   $debug If true it will display the fetched row in addition
-     *                      to the SQL.
+     * @param string $fname The function name that started the query, should contain relevant arguments in the text.
+     * @param bool|string $error Sent to _error() in case of errors
+     * @param bool $debug If true it will display the fetched row in addition to the SQL.
      * @return array|false
      */
     protected function _selectOneAssoc( $query, $fname, $error = false, $debug = false )
@@ -1206,12 +1271,16 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * Runs a select query, applying the $fetchCall callback to one result
      * If there are more than one row it will fail and exit, if 0 it returns false.
      *
+     * @param $query
      * @param string $fname The function name that started the query, should
      *                      contain relevant arguments in the text.
-     * @param string $error Sent to _error() in case of errors
+     * @param bool|string $error Sent to _error() in case of errors
      * @param bool $debug If true it will display the fetched row in addition to the SQL.
      * @param callback $fetchCall The callback to fetch the row.
-     * @return mixed
+     *
+     * @throws eZDFSFileHandlerTableNotFoundException
+     *
+     * @return bool|array
      */
     protected function _selectOne( $query, $fname, $error = false, $debug = false, $fetchCall )
     {
@@ -1321,6 +1390,8 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * A return value of false from the callback is considered a failure, any
      * other value is returned from _protect(). For extended error handling call
      * _fail() and return the value.
+     *
+     * @return bool|mixed
      */
     protected function _protect()
     {
@@ -1365,6 +1436,9 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
         return $result;
     }
 
+    /**
+     * @param eZMySQLBackendError|bool $res
+     */
     protected function _handleErrorType( $res )
     {
         if ( $res === false )
@@ -1395,8 +1469,10 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
     /**
      * Creates an error object which can be read by some backend functions.
+     *
      * @param mixed $value The value which is sent to the debug system.
-     * @param string $text The text/header for the value.
+     * @param string|bool $text The text/header for the value.
+     * @return eZMySQLBackendError
      */
     protected function _fail( $value, $text = false )
     {
@@ -1406,10 +1482,15 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
     /**
      * Performs mysql query and returns mysql result.
+     *
      * Times the sql execution, adds accumulator timings and reports SQL to
      * debug.
-     * @param string $fname The function name that started the query, should
+     *
+     * @param string $query
+     * @param string|bool $fname The function name that started the query, should
      *                      contain relevant arguments in the text.
+     * @param bool $reportError
+     * @return bool|mysqli_result
      */
     protected function _query( $query, $fname = false, $reportError = true )
     {
@@ -1462,6 +1543,9 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
     /**
      * Provides the SQL calls to convert $value to MD5
      * The returned value can directly be put into SQLs.
+     *
+     * @param string $value
+     * @return string
      */
     protected function _md5( $value )
     {
@@ -1497,9 +1581,11 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
     /**
      * Report SQL $query to debug system.
      *
-     * @param string $fname The function name that started the query, should contain relevant arguments in the text.
-     * @param int    $timeTaken Number of seconds the query + related operations took (as float).
-     * @param int $numRows Number of affected rows.
+     * @param string $query
+     * @param string|bool $fname The function name that started the query, should contain relevant arguments in the text.
+     * @param int $timeTaken Number of seconds the query + related operations took (as float).
+     * @param int|bool $numRows Number of affected rows.
+     * @return void
      */
     function _report( $query, $fname, $timeTaken, $numRows = false )
     {
@@ -1521,7 +1607,10 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
      * given filepath, suffixed with .generating. If the file already exists,
      * insertion is not performed and false is returned (means that the file
      * is already being generated)
+     *
      * @param string $filePath
+     * @param string $generatingFilePath
+     *
      * @return array array with 2 indexes: 'result', containing either ok or ko,
      *         and another index that depends on the result:
      *         - if result == 'ok', the 'mtime' index contains the generating
@@ -1602,7 +1691,10 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
     /**
      * Ends the cache generation for the current file: moves the (meta)data for
      * the .generating file to the actual file, and removed the .generating
+     *
      * @param string $filePath
+     * @param string $generatingFilePath
+     * @param bool $rename
      * @return bool
      */
     public function _endCacheGeneration( $filePath, $generatingFilePath, $rename )
@@ -1666,8 +1758,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
                 }
                 $this->_query( "DELETE FROM " . $this->dbTable( $filePath ) . " WHERE name_hash = " . $this->_md5( $generatingFilePath ), $fname, true );
             }
-            // the original file exists: we move the generating data to this file
-            // and update it
+            // the original file exists: we move the generating data to this file and update it
             else
             {
                 if ( !$this->dfsbackend->renameOnDFS( $generatingFilePath, $filePath ) )
@@ -1763,7 +1854,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
     /**
      * Aborts the cache generation process by removing the .generating file
-     * @param string $filePath Real cache file path
+     *
      * @param string $generatingFilePath .generating cache file path
      * @return void
      */
@@ -1821,10 +1912,9 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
     }
 
     /**
-     * Returns the remaining time, in seconds, before the generating file times
-     * out
+     * Returns the remaining time, in seconds, before the generating file times out
      *
-     * @param resource $fileRow
+     * @param array $row
      *
      * @return int Remaining generation seconds. A negative value indicates a timeout.
      */
@@ -1839,13 +1929,15 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
     /**
      * Returns the list of expired files
      *
+     * @since 4.3
+     *
      * @param array $scopes Array of scopes to consider. At least one.
-     * @param int $limit Max number of items. Set to false for unlimited.
-     * @param int $expiry Number of seconds, only items older than this will be returned.
+     * @param array|int $limit Max number of items. Set to false for unlimited.
+     * @param bool|int $expiry Number of seconds, only items older than this will be returned.
+     *
+     * @throws ezcBaseValueException
      *
      * @return array(filepath)
-     *
-     * @since 4.3
      */
     public function expiredFilesList( $scopes, $limit = array( 0, 100 ), $expiry = false )
     {
@@ -1934,8 +2026,18 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
     }
 
     /**
+     * Transforms $filePath so that it contains a valid href to the file, wherever it is stored.
+     * @param string
+     * @return string
+     */
+    public function applyServerUri( $filePath )
+    {
+        return $this->dfsbackend->applyServerUri( $filePath );
+    }
+
+    /**
      * DB connexion handle
-     * @var handle
+     * @var mysqli
      */
     public $db = null;
 
@@ -1961,7 +2063,7 @@ class eZDFSFileHandlerMySQLiBackend implements eZClusterEventNotifier
 
     /**
      * Distributed filesystem backend
-     * @var eZDFSFileHandlerDFSBackend
+     * @var eZDFSFileHandlerDFSBackendInterface
      */
     protected $dfsbackend = null;
 

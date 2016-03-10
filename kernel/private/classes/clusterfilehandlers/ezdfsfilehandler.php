@@ -923,6 +923,16 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
     }
 
     /**
+     * Returns file mime-type / content-type.
+     * @return string|null
+     */
+    public function dataType()
+    {
+        eZDebugSetting::writeDebug( 'kernel-clustering', "dfs::dataType()" );
+        return !empty( $this->metaData['datatype'] ) ? $this->metaData['datatype'] : null;
+    }
+
+    /**
      * Returns file modification time.
      * @return int|null
      */
@@ -1440,6 +1450,11 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
     public function hasStaleCacheSupport()
     {
         return true;
+    }
+
+    public function applyServerUri( $filePath )
+    {
+        return self::$dbbackend->applyServerUri( $filePath );
     }
 
     /**

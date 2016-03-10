@@ -180,6 +180,26 @@ div.ezoeItemCustomTag.separator
 
 div.ezoeItemCustomTag.separator p { margin: 2px; }
 
+/* table valign */
+td[customattributes*="valign|top"], th[customattributes*="valign|top"]
+{
+    vertical-align: top;
+}
+
+td[customattributes*="valign|baseline"], th[customattributes*="valign|baseline"]
+{
+    vertical-align: baseline;
+}
+
+td[customattributes*="valign|middle"], th[customattributes*="valign|middle"]
+{
+    vertical-align: middle;
+}
+
+td[customattributes*="valign|bottom"], th[customattributes*="valign|bottom"]
+{
+    vertical-align: bottom;
+}
 
 /* change the style for embed tags */
 
@@ -204,6 +224,18 @@ span.ezoeItemNonEditable[align="left"]
 img[inline="false"]
 {
     display: block;
+}
+
+img[inline="false"][align="right"]
+{
+    float: right;
+    clear: both;
+}
+
+img[inline="false"][align="left"]
+{
+    float: left;
+    clear: both;
 }
 
 /* core.css ez layout styles for embed tags */

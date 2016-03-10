@@ -129,7 +129,7 @@ class eZUserType extends eZDataType
                                                                              'eZUserType' ) );
                         return eZInputValidator::STATE_INVALID;
                     }
-                    if ( $password != $passwordConfirm )
+                    if ( $password !== $passwordConfirm )
                     {
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              'The passwords do not match.',
@@ -250,6 +250,13 @@ class eZUserType extends eZDataType
         }
         else
         {
+            // No "draft" for version 1 to avoid regression for existing code creating new users.
+            if ( $contentObjectAttribute->attribute( 'version' ) == '1' )
+            {
+                $user->store();
+                $contentObjectAttribute->setContent( $user );
+            }
+
             // saving information in the object attribute data_text field to simulate a draft
             $contentObjectAttribute->setAttribute( 'data_text', $this->serializeDraft( $user ) );
         }

@@ -60,9 +60,9 @@ var sortableSubitems = function () {
         }
 
         var thumbView = function(cell, record, column, data) {
-            var url = record.getData('thumbnail_url');
+            var url = encodeURI(record.getData('thumbnail_url'));
             if (url) {
-                var thBack = 'background: url(' + url + ') no-repeat;';
+                var thBack = 'background: url(\'' + url.replace(/'/g, "\\'") + '\') no-repeat;';
                 var thWidth = ' width: ' + record.getData('thumbnail_width') + 'px;';
                 var thHeight = ' height: ' + record.getData('thumbnail_height') + 'px;';
                 cell.innerHTML = '<div class="thumbview"><div id="thumbfield" class="thumbfield"></div><span><div style="' + thBack + thWidth + thHeight + '"></div></span></div>';
@@ -110,7 +110,7 @@ var sortableSubitems = function () {
             {key:"crank", label:"", sortable:false, formatter:customMenu, resizeable:false},
             {key:"thumbnail", label:labelsObj.DATA_TABLE_COLS.thumbnail, sortable:false, formatter:thumbView, resizeable:false},
             {key:"name", label:labelsObj.DATA_TABLE_COLS.name, sortable:true, resizeable:true, formatter:formatName},
-            {key:"hidden_status_string", label: labelsObj.DATA_TABLE_COLS.visibility, sortable:false, resizeable:true},
+            {key:"hidden_status_string", label: labelsObj.DATA_TABLE_COLS.visibility, sortable:true, resizeable:true},
             {key:"class_name", label:labelsObj.DATA_TABLE_COLS.type, sortable:true, resizeable:true},
             {key:"creator", label:labelsObj.DATA_TABLE_COLS.modifier, sortable:false, resizeable:true},
             {key:"modified_date", label:labelsObj.DATA_TABLE_COLS.modified, sortable:true, resizeable:true},
