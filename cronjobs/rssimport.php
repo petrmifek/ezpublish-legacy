@@ -393,6 +393,10 @@ function setObjectAttributeValue( $objectAttribute, $value )
         return;
     }
 
+    //hack to decode html entities encoded in the text
+    //to make it more valid, figure out the "UTF-8" programatically
+    $value = html_entity_decode( $value, ENT_COMPAT | ENT_HTML401, "UTF-8");
+
     $dataType = $objectAttribute->attribute( 'data_type_string' );
     switch( $dataType )
     {
