@@ -651,18 +651,18 @@ class eZContentOperationCollection
         $publishedLanguageCodes = array_keys( $publishedLanguages );
 
         $version = $object->version( $versionNum );
-        $versionTranslationList = $version->translationList( false, false );
+        $versionTranslationList = array_keys( eZContentLanguage::languagesByMask( $version->attribute( 'language_mask' ) ) );
 
         foreach ( $publishedVersionTranslations as $translation )
         {
-            if ( in_array( $translation->attribute( 'language_code' ), $versionTranslationList )
-              || !in_array( $translation->attribute( 'language_code' ), $publishedLanguageCodes ) )
+            $translationLanguageCode = $translation->attribute( 'language_code' );
+            if ( in_array( $translationLanguageCode, $versionTranslationList )
+                || !in_array( $translationLanguageCode, $publishedLanguageCodes ) )
             {
                 continue;
             }
 
-            $contentObjectAttributes = $translation->objectAttributes();
-            foreach ( $contentObjectAttributes as $attribute )
+            foreach ( $translation->objectAttributes() as $attribute )
             {
                 $clonedAttribute = $attribute->cloneContentObjectAttribute( $versionNum, $publishedVersionNum, $objectID );
                 $clonedAttribute->sync();
@@ -735,6 +735,11 @@ class eZContentOperationCollection
        }
 
        eZContentObject::fixReverseRelations( $objectID, 'move' );
+
+        if ( !eZSearch::getEngine() instanceof eZSearchEngine )
+        {
+            eZContentOperationCollection::registerSearchObject( $objectID );
+        }
 
        return array( 'status' => true );
     }
@@ -1214,12 +1219,20 @@ class eZContentOperationCollection
         $curNode = eZContentObjectTreeNode::fetch( $parentNodeID );
         if ( $curNode instanceof eZContentObjectTreeNode )
         {
+             $objectIDs = array();
              $db = eZDB::instance();
              $db->begin();
              for ( $i = 0, $l = count( $priorityArray ); $i < $l; $i++ )
              {
                  $priority = (int) $priorityArray[$i];
                  $nodeID = (int) $priorityIDArray[$i];
+                 $node = eZContentObjectTreeNode::fetch( $nodeID );
+                 if ( !$node instanceof eZContentObjectTreeNode )
+                 {
+                     continue;
+                 }
+
+                 $objectIDs[] = $node->attribute( 'contentobject_id' );
                  $db->query( "UPDATE
                                   ezcontentobject_tree
                               SET
@@ -1229,6 +1242,13 @@ class eZContentOperationCollection
              }
              $curNode->updateAndStoreModified();
              $db->commit();
+             if ( !eZSearch::getEngine() instanceof eZSearchEngine )
+             {
+                 foreach ( $objectIDs as $objectID )
+                 {
+                     eZContentOperationCollection::registerSearchObject( $objectID );
+                 }
+             }
         }
         return array( 'status' => true );
     }
@@ -1373,8 +1393,15 @@ class eZContentOperationCollection
             $state = eZContentObjectState::fetchById( $selectedStateID );
             $object->assignState( $state );
         }
+        eZAudit::writeAudit( 'state-assign', array( 'Content object ID' => $object->attribute( 'id' ),
+                                                    'Content object name' => $object->attribute( 'name' ),
+                                                    'Selected State ID Array' => implode( ', ' , $selectedStateIDList ),
+                                                    'Comment' => 'Updated states of the current object: eZContentOperationCollection::updateObjectState()' ) );
         //call appropriate method from search engine
         eZSearch::updateObjectState($objectID, $selectedStateIDList);
+
+        // Triggering content/state/assign event for persistence cache purge
+        ezpEvent::getInstance()->notify( 'content/state/assign', array( $objectID, $selectedStateIDList ) );
 
         eZContentCacheManager::clearContentCacheIfNeeded( $objectID );
 
