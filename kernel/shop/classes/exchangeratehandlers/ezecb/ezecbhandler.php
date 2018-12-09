@@ -10,13 +10,15 @@
 
 class eZECBHandler extends eZExchangeRatesUpdateHandler
 {
-    function eZECBHandler()
+    //function eZECBHandler()
+    public function __construct()
     {
         $this->ServerName = false;
         $this->ServerPort = false;
         $this->RatesURI = false;
 
-        eZExchangeRatesUpdateHandler::eZExchangeRatesUpdateHandler();
+        //eZExchangeRatesUpdateHandler::eZExchangeRatesUpdateHandler();
+        parent::__construct();
     }
 
     function initialize( $params = array() )
@@ -69,6 +71,8 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
         $ratesList = array();
 
         $buf = eZHTTPTool::sendHTTPRequest( "{$serverName}/{$ratesURI}", $serverPort,  false, 'eZ Publish', false );
+        //pm petrmifek anapol aa change: ez has issues parsing chunked encoding
+        $pmData = eZHTTPTool::getDataByURL( "{$serverName}/{$ratesURI}" );
         if ( $buf )
         {
             $header = false;
@@ -81,7 +85,9 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
                     // parse xml
                     $dom = new DOMDocument( '1.0', 'utf-8' );
                     $dom->preserveWhiteSpace = false;
-                    $success = $dom->loadXML( $body );
+                    //pm petrmifek anapol aa change:
+                    //$success = $dom->loadXML( $body );
+                    $success = $dom->loadXML( $pmData );
 
                     $xpath = new DOMXPath( $dom );
                     $xpath->registerNamespace( 'eurofxref', 'http://www.ecb.int/vocabulary/2002-08-01/eurofxref' );
