@@ -104,6 +104,7 @@ class eZShopFunctionCollection
         }
 
         $sqlOrderString = ( $ascending ? 'ORDER BY count asc' : 'ORDER BY count desc' );
+        //pm petrmifek anapol line added below = //AND ezorder.is_temporary = 0
         $query="SELECT sum(ezproductcollection_item.item_count) as count,
                        ezproductcollection_item.contentobject_id
                   FROM ezcontentobject_tree,
@@ -112,6 +113,7 @@ class eZShopFunctionCollection
                  WHERE ezcontentobject_tree.contentobject_id=ezproductcollection_item.contentobject_id AND
                        ezorder.productcollection_id=ezproductcollection_item.productcollection_id AND
                        ezcontentobject_tree.path_string like '$nodePath%'
+                       AND ezorder.is_temporary = 0
                        $sqlCreatedCondition
                  GROUP BY ezproductcollection_item.contentobject_id
                  $sqlOrderString";
